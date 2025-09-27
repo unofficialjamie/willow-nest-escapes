@@ -44,10 +44,10 @@ const BookingForm = ({
 
   // Horizontal layout for homepage
   if (variant === "hero") {
-    return <Card className={`${cardClass} ${className} w-full max-w-6xl mx-auto`}>
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    return <Card className={`${cardClass} ${className} w-full mx-auto`}>
+        <CardContent className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-end">
               {/* Location */}
               {showLocationSelector && <div className="space-y-2">
                   <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
