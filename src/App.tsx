@@ -8,6 +8,9 @@ import Footer from "./components/Footer";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import LocationsPage from "./pages/LocationsPage";
+import LocationIbadanPage from "./pages/LocationIbadanPage";
+import LocationOgbomoshoPage from "./pages/LocationOgbomoshoPage";
+import LocationAbujaPage from "./pages/LocationAbujaPage";
 import FacilitiesPage from "./pages/FacilitiesPage";
 import ContactPage from "./pages/ContactPage";
 import FAQPage from "./pages/FAQPage";
@@ -30,6 +33,9 @@ const App = () => (
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/locations" element={<LocationsPage />} />
+              <Route path="/locations/ibadan" element={<LocationIbadanPage />} />
+              <Route path="/locations/ogbomosho" element={<LocationOgbomoshoPage />} />
+              <Route path="/locations/abuja" element={<LocationAbujaPage />} />
               <Route path="/facilities" element={<FacilitiesPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/faq" element={<FAQPage />} />
