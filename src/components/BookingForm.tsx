@@ -45,8 +45,8 @@ const BookingForm = ({
   // Horizontal layout for homepage
   if (variant === "hero") {
     return <Card className={`${cardClass} ${className} w-full mx-auto`}>
-        <CardContent className="p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="p-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-end">
               {/* Location */}
               {showLocationSelector && <div className="space-y-2">
@@ -78,31 +78,30 @@ const BookingForm = ({
                 </div>
               </div>
 
-              {/* Guests and Rooms */}
+              {/* Guests */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                   <Users className="h-4 w-4" />
-                  Guests and Rooms
+                  Guests
                 </Label>
-                <Select value={guests} onValueChange={setGuests}>
-                  <SelectTrigger className="h-12 text-base">
-                    <SelectValue placeholder="1 guest, 1 room" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 Guest, 1 Room</SelectItem>
-                    <SelectItem value="2">2 Guests, 1 Room</SelectItem>
-                    <SelectItem value="3">3 Guests, 1 Room</SelectItem>
-                    <SelectItem value="4">4 Guests, 2 Rooms</SelectItem>
-                    <SelectItem value="5">5+ Guests, 2+ Rooms</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select value={guests} onValueChange={setGuests}>
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="1 Guest" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 Guest</SelectItem>
+                      <SelectItem value="2">2 Guests</SelectItem>
+                      <SelectItem value="3">3 Guests</SelectItem>
+                      <SelectItem value="4">4 Guests</SelectItem>
+                      <SelectItem value="5">5 Guests</SelectItem>
+                    </SelectContent>
+                  </Select>
               </div>
             </div>
 
-            {/* Filter buttons and Search */}
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t">
-              
-              <Button type="submit" variant="luxury" className="px-8">
+            {/* Search Button */}
+            <div className="flex justify-end pt-2">
+              <Button type="submit" className="px-8 bg-black text-white hover:bg-gray-800">
                 Search
               </Button>
             </div>
@@ -151,7 +150,7 @@ const BookingForm = ({
                 <SelectItem value="2">2 Guests</SelectItem>
                 <SelectItem value="3">3 Guests</SelectItem>
                 <SelectItem value="4">4 Guests</SelectItem>
-                <SelectItem value="5">5+ Guests</SelectItem>
+                <SelectItem value="5">5 Guests</SelectItem>
               </SelectContent>
             </Select>
           </div>
