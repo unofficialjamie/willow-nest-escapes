@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, Users, CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, Users, CalendarDays, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,7 @@ const BookingForm = ({
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState("1");
   const [location, setLocation] = useState(preselectedLocation);
+  const [isExpanded, setIsExpanded] = useState(false);
   const {
     toast
   } = useToast();
@@ -47,13 +48,10 @@ const BookingForm = ({
     return <Card className={`${cardClass} ${className} w-full mx-auto`}>
         <CardContent className="p-4">
           <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-end">
-              {/* Location */}
-              {showLocationSelector && <div className="space-y-2">
-                  <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    Location
-                  </Label>
+            {/* Mobile Toggle and Location */}
+            <div className="flex items-center justify-between gap-4">
+              {showLocationSelector && (
+                <div className="flex-1">
                   <Select value={location} onValueChange={setLocation} required>
                     <SelectTrigger className="h-12 text-base">
                       <SelectValue placeholder="Find location" />
@@ -64,26 +62,52 @@ const BookingForm = ({
                       <SelectItem value="abuja">Abuja (27 Rooms)</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>}
-
-              {/* Check-in and Check-out Date */}
-              <div className="space-y-2 md:col-span-2">
-                <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  Check-in and Check-out Date
-                </Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <Input type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} required className="h-12 text-base" placeholder="Check-in" />
-                  <Input type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} required className="h-12 text-base" placeholder="Check-out" />
                 </div>
-              </div>
+              )}
+              
+              {/* Mobile Toggle Button */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="md:hidden flex items-center gap-2 text-sm"
+              >
+                {isExpanded ? (
+                  <>
+                    <ChevronUp className="h-4 w-4" />
+                    Less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4" />
+                    More
+                  </>
+                )}
+              </Button>
+            </div>
 
-              {/* Guests */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  Guests
-                </Label>
+            {/* Expandable Content */}
+            <div className={`space-y-4 ${!isExpanded ? 'hidden md:block' : ''}`}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Check-in and Check-out Date */}
+                <div className="space-y-2 md:col-span-2 lg:col-span-2">
+                  <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    Check-in and Check-out Date
+                  </Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <Input type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} required className="h-12 text-base" placeholder="Check-in" />
+                    <Input type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} required className="h-12 text-base" placeholder="Check-out" />
+                  </div>
+                </div>
+
+                {/* Guests */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                    Guests
+                  </Label>
                   <Select value={guests} onValueChange={setGuests}>
                     <SelectTrigger className="h-12 text-base">
                       <SelectValue placeholder="1 Guest" />
@@ -96,14 +120,15 @@ const BookingForm = ({
                       <SelectItem value="5">5 Guests</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
               </div>
-            </div>
 
-            {/* Search Button */}
-            <div className="flex justify-end pt-2">
-              <Button type="submit" className="px-8 bg-black text-white hover:bg-gray-800">
-                Search
-              </Button>
+              {/* Search Button */}
+              <div className="flex justify-center md:justify-end pt-2">
+                <Button type="submit" className="w-full md:w-auto px-8 bg-black text-white hover:bg-gray-800">
+                  Search
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>

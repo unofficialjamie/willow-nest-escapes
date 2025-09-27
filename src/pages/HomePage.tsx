@@ -177,7 +177,7 @@ const HomePage = () => {
         </div>
         
         {/* Booking Form Overlay */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-7xl px-4">
+        <div className="absolute bottom-8 md:bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-7xl px-4">
           <BookingForm variant="hero" showLocationSelector={true} />
         </div>
       </section>
