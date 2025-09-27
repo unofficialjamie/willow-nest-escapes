@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, Heart, Star, Users, Lightbulb } from "lucide-react";
 import AmenityCard from "@/components/AmenityCard";
+import heroImage from "@/assets/hero-luxury-hotel.jpg";
 
 const AboutPage = () => {
   const values = [
@@ -34,10 +35,14 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-24 bg-luxury-cream">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-6">About Us</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+      <section 
+        className="py-24 bg-cover bg-center bg-no-repeat relative"
+        style={{ backgroundImage: `url(${heroImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-6 text-white">About Us</h1>
+          <p className="text-xl text-white/90 max-w-3xl mx-auto">
             Discover the story behind Nigeria's premier hospitality brand
           </p>
         </div>

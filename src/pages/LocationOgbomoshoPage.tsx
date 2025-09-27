@@ -35,40 +35,37 @@ const LocationOgbomoshoPage = () => {
       
       <div className="min-h-screen">
         {/* Hero Section */}
-        <section className="py-16 bg-background">
+        <section 
+          className="relative h-screen flex items-center text-white"
+          style={{
+            backgroundImage: `linear-gradient(rgba(30, 15, 15, 0.7), rgba(30, 15, 15, 0.5)), url(${heroImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
           <div className="container mx-auto px-4">
-            <div className="flex flex-col lg:flex-row gap-12 items-center">
+            <div className="flex items-center justify-between">
               {/* Left Content */}
-              <div className="w-full lg:w-1/2 space-y-6">
-                <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground">
+              <div className="max-w-2xl space-y-6">
+                <h1 className="font-heading text-5xl md:text-6xl font-bold leading-tight">
                   Ogbomosho
                 </h1>
-                <h2 className="font-heading text-2xl text-primary font-semibold">
+                <h2 className="font-heading text-2xl text-white/90 font-semibold">
                   Traditional Elegance
                 </h2>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  Immerse yourself in the rich cultural heritage of Oyo State while enjoying contemporary 
+                <p className="text-lg text-white/80 leading-relaxed">
+                  Immerse yourself in the rich cultural heritage of Oyo State while enjoying contemporary
                   comfort. Our Ogbomosho location perfectly blends traditional architecture with modern 
                   luxury amenities.
                 </p>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-md font-semibold">
+                <Button className="bg-white hover:bg-white/90 text-black px-6 py-3 rounded-md font-semibold">
                   Get Address
                 </Button>
               </div>
               
-              {/* Right Image with Booking Widget */}
-              <div className="w-full lg:w-1/2 relative">
-                <div 
-                  className="h-96 rounded-lg bg-cover bg-center relative overflow-hidden"
-                  style={{
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${poolImage})`,
-                  }}
-                >
-                  {/* Booking Widget Overlay */}
-                  <div className="absolute top-4 right-4 w-80">
-                    <BookingForm variant="hero" preselectedLocation="ogbomosho" showLocationSelector={false} />
-                  </div>
-                </div>
+              {/* Right Booking Widget */}
+              <div className="absolute top-4 right-4 w-80 hidden lg:block">
+                <BookingForm variant="hero" preselectedLocation="ogbomosho" showLocationSelector={false} />
               </div>
             </div>
           </div>
