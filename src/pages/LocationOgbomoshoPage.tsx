@@ -5,6 +5,7 @@ import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Ph
 import roomImage from "@/assets/room-elegant.jpg";
 import poolImage from "@/assets/pool-area.jpg";
 import restaurantImage from "@/assets/restaurant.jpg";
+import heroImage from "@/assets/ogbomosho-hero.jpg";
 
 const LocationOgbomoshoPage = () => {
   const amenities = [
@@ -65,7 +66,7 @@ const LocationOgbomoshoPage = () => {
                 >
                   {/* Booking Widget Overlay */}
                   <div className="absolute top-4 right-4 w-80">
-                    <BookingForm variant="hero" />
+                    <BookingForm variant="hero" preselectedLocation="ogbomosho" showLocationSelector={false} />
                   </div>
                 </div>
               </div>

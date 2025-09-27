@@ -5,7 +5,7 @@ import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Ph
 import roomImage from "@/assets/room-elegant.jpg";
 import poolImage from "@/assets/pool-area.jpg";
 import restaurantImage from "@/assets/restaurant.jpg";
-import heroImage from "@/assets/hero-luxury-hotel.jpg";
+import heroImage from "@/assets/ibadan-hero.jpg";
 
 const LocationIbadanPage = () => {
   const amenities = [
@@ -58,8 +58,8 @@ const LocationIbadanPage = () => {
               </div>
               
               {/* Right Booking Form */}
-              <div className="w-full max-w-md">
-                <BookingForm variant="hero" />
+              <div className="w-full max-w-md ml-auto">
+                <BookingForm variant="hero" preselectedLocation="ibadan" showLocationSelector={false} />
               </div>
             </div>
           </div>

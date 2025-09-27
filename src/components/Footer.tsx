@@ -12,7 +12,7 @@ const Footer = () => {
             <img 
               src={logoFull} 
               alt="The Willow Nest Hotel" 
-              className="h-12 w-auto brightness-0 invert"
+              className="h-12 w-auto"
             />
             <p className="text-sm text-secondary-foreground/80">
               Experience timeless elegance, modern luxury, and authentic cultural touches across Nigeria.
