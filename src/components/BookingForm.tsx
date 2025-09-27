@@ -6,56 +6,50 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-
 interface BookingFormProps {
   className?: string;
   variant?: "default" | "hero";
   preselectedLocation?: string;
   showLocationSelector?: boolean;
 }
-
-const BookingForm = ({ 
-  className = "", 
-  variant = "default", 
+const BookingForm = ({
+  className = "",
+  variant = "default",
   preselectedLocation = "",
-  showLocationSelector = true 
+  showLocationSelector = true
 }: BookingFormProps) => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState("1");
   const [location, setLocation] = useState(preselectedLocation);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!checkIn || !checkOut || (showLocationSelector && !location)) {
+    if (!checkIn || !checkOut || showLocationSelector && !location) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     toast({
       title: "Booking Request Sent",
-      description: "We'll contact you shortly to confirm your reservation",
+      description: "We'll contact you shortly to confirm your reservation"
     });
   };
-
   const cardClass = variant === "hero" ? "bg-background/95 backdrop-blur-sm shadow-luxury" : "card-luxury";
 
   // Horizontal layout for homepage
   if (variant === "hero") {
-    return (
-      <Card className={`${cardClass} ${className} w-full max-w-6xl mx-auto`}>
+    return <Card className={`${cardClass} ${className} w-full max-w-6xl mx-auto`}>
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               {/* Location */}
-              {showLocationSelector && (
-                <div className="space-y-2">
+              {showLocationSelector && <div className="space-y-2">
                   <Label className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                     <MapPin className="h-4 w-4" />
                     Location
@@ -70,8 +64,7 @@ const BookingForm = ({
                       <SelectItem value="abuja">Abuja (27 Rooms)</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-              )}
+                </div>}
 
               {/* Check-in and Check-out Date */}
               <div className="space-y-2 md:col-span-2">
@@ -80,22 +73,8 @@ const BookingForm = ({
                   Check-in and Check-out Date
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="date"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    required
-                    className="h-12 text-base"
-                    placeholder="Check-in"
-                  />
-                  <Input
-                    type="date"
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    required
-                    className="h-12 text-base"
-                    placeholder="Check-out"
-                  />
+                  <Input type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} required className="h-12 text-base" placeholder="Check-in" />
+                  <Input type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} required className="h-12 text-base" placeholder="Check-out" />
                 </div>
               </div>
 
@@ -122,36 +101,18 @@ const BookingForm = ({
 
             {/* Filter buttons and Search */}
             <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t">
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" variant="outline" size="sm" className="rounded-full">
-                  Hotels
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="rounded-full">
-                  Villas
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="rounded-full">
-                  Apartments
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="rounded-full">
-                  Resorts
-                </Button>
-                <Button type="button" variant="ghost" size="sm" className="rounded-full">
-                  Cottages
-                </Button>
-              </div>
+              
               <Button type="submit" variant="luxury" className="px-8">
                 Search
               </Button>
             </div>
           </form>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
 
   // Vertical compact layout for location pages (no location selector)
-  return (
-    <Card className={`${cardClass} ${className}`}>
+  return <Card className={`${cardClass} ${className}`}>
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-heading text-center">Book Your Stay</CardTitle>
       </CardHeader>
@@ -163,14 +124,7 @@ const BookingForm = ({
               <Calendar className="h-4 w-4 text-primary" />
               Check-in Date
             </Label>
-            <Input
-              id="checkin"
-              type="date"
-              value={checkIn}
-              onChange={(e) => setCheckIn(e.target.value)}
-              required
-              className="text-base p-3"
-            />
+            <Input id="checkin" type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)} required className="text-base p-3" />
           </div>
 
           {/* Check-out */}
@@ -179,14 +133,7 @@ const BookingForm = ({
               <CalendarDays className="h-4 w-4 text-primary" />
               Check-out Date
             </Label>
-            <Input
-              id="checkout"
-              type="date"
-              value={checkOut}
-              onChange={(e) => setCheckOut(e.target.value)}
-              required
-              className="text-base p-3"
-            />
+            <Input id="checkout" type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)} required className="text-base p-3" />
           </div>
 
           {/* Guests */}
@@ -214,8 +161,6 @@ const BookingForm = ({
           </Button>
         </form>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default BookingForm;
