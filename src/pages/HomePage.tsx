@@ -294,43 +294,104 @@ const HomePage = () => {
       </section>
 
         {/* About Preview Section */}
-        <section className="py-16 bg-background">
+        <section className="py-16 bg-secondary text-secondary-foreground">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6">
-                Redefining Nigerian Hospitality
-              </h2>
-              <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-                The Willow Nest Hotel is a proudly Nigerian hospitality brand created to set a new standard of luxury and convenience. We blend sophistication with comfort to create unforgettable stays for business travelers, leisure guests, and families.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Award className="h-8 w-8 text-primary" />
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6">
+                  About The Willow Nest Hotel
+                </h2>
+                <p className="text-xl text-secondary-foreground/90 leading-relaxed mb-8">
+                  A proudly Nigerian hospitality brand setting new standards of luxury and convenience
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12">
+                {/* Left Content */}
+                <div className="space-y-6">
+                  <h3 className="font-heading text-2xl font-bold">Who We Are</h3>
+                  <p className="text-secondary-foreground/90 leading-relaxed">
+                    The Willow Nest Hotel is a proudly Nigerian hospitality brand created to set a new standard of luxury and convenience. With locations in Ibadan, Ogbomosho, and Abuja, we provide personalized service, elegant accommodations, and thoughtfully designed spaces for business, leisure, and cultural exploration.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div>
+                      <h4 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
+                        <Award className="h-5 w-5 text-primary" />
+                        Our Vision
+                      </h4>
+                      <p className="text-sm text-secondary-foreground/80">
+                        To be Nigeria's leading hotel group, offering unforgettable stays through exceptional service, modern facilities, and authentic cultural experiences.
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-heading text-lg font-semibold mb-3 flex items-center gap-2">
+                        <Heart className="h-5 w-5 text-primary" />
+                        Our Mission
+                      </h4>
+                      <p className="text-sm text-secondary-foreground/80">
+                        We are committed to delivering comfort, convenience, and class in every detail. From our beautifully designed rooms to our state-of-the-art amenities.
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-heading text-lg font-semibold mb-2">Excellence in Service</h3>
-                  <p className="text-muted-foreground text-sm">Personalized attention and world-class hospitality</p>
                 </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Heart className="h-8 w-8 text-primary" />
+                
+                {/* Right Content - Values */}
+                <div className="space-y-6">
+                  <h3 className="font-heading text-2xl font-bold">Our Core Values</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <Star className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h5 className="font-semibold mb-1">Excellence in Service</h5>
+                        <p className="text-sm text-secondary-foreground/80">Personalized attention and world-class hospitality standards</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <Heart className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h5 className="font-semibold mb-1">Authenticity and Culture</h5>
+                        <p className="text-sm text-secondary-foreground/80">Rich Nigerian heritage blended with modern luxury</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <Award className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h5 className="font-semibold mb-1">Comfort and Elegance</h5>
+                        <p className="text-sm text-secondary-foreground/80">Elegantly designed spaces for ultimate relaxation</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <Users className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h5 className="font-semibold mb-1">Innovation and Growth</h5>
+                        <p className="text-sm text-secondary-foreground/80">Continuous improvement and expanding our reach</p>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="font-heading text-lg font-semibold mb-2">Authentic Culture</h3>
-                  <p className="text-muted-foreground text-sm">Rich Nigerian heritage with modern luxury</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Star className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="font-heading text-lg font-semibold mb-2">Premium Comfort</h3>
-                  <p className="text-muted-foreground text-sm">Elegantly designed spaces for ultimate relaxation</p>
                 </div>
               </div>
-              <Link to="/about">
-                <Button variant="outline" size="lg">
-                  Learn More About Us
-                </Button>
-              </Link>
+              
+              <div className="text-center">
+                <Link to="/about">
+                  <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-secondary">
+                    Learn More About Our Story
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>

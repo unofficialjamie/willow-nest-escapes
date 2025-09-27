@@ -1,28 +1,31 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BookingForm from "@/components/BookingForm";
-import AmenityCard from "@/components/AmenityCard";
-import { MapPin, Star, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Plane } from "lucide-react";
+import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Phone, Mail, Plane } from "lucide-react";
 import roomImage from "@/assets/room-elegant.jpg";
 import poolImage from "@/assets/pool-area.jpg";
 import restaurantImage from "@/assets/restaurant.jpg";
+import heroImage from "@/assets/hero-luxury-hotel.jpg";
 
 const LocationAbujaPage = () => {
   const amenities = [
-    { icon: Wifi, title: "Free Wi-Fi", description: "High-speed business internet access" },
-    { icon: Car, title: "Executive Parking", description: "Valet parking for business executives" },
-    { icon: Coffee, title: "24/7 Room Service", description: "Premium dining service around the clock" },
-    { icon: Utensils, title: "Fine Dining", description: "Premium fine dining restaurant" },
-    { icon: Dumbbell, title: "Executive Fitness", description: "Premium fitness center with modern equipment" },
-    { icon: Waves, title: "Executive Pool", description: "Exclusive outdoor pool for guests" },
-    { icon: Shield, title: "Premium Security", description: "Exclusive concierge and 24/7 security" },
-    { icon: Users, title: "Business Facilities", description: "Modern business and meeting facilities" }
+    { icon: Wifi, title: "Free Wi-Fi", description: "High-speed internet throughout the property" },
+    { icon: Car, title: "Free Parking", description: "Complimentary valet and self-parking available" },
+    { icon: Coffee, title: "24/7 Room Service", description: "Gourmet dining delivered to your room" },
+    { icon: Utensils, title: "Fine Dining", description: "Award-winning restaurant with local and international cuisine" },
+    { icon: Dumbbell, title: "Fitness Center", description: "State-of-the-art gym with personal training" },
+    { icon: Waves, title: "Swimming Pool", description: "Outdoor pool with poolside service" },
+    { icon: Shield, title: "24/7 Security", description: "Round-the-clock security and concierge services" },
+    { icon: Users, title: "Conference Facilities", description: "Modern meeting rooms and event spaces" }
   ];
 
-  const gallery = [
-    { image: restaurantImage, title: "Fine Dining", description: "Premium restaurant with international cuisine" },
-    { image: poolImage, title: "Executive Pool", description: "Exclusive outdoor pool and fitness center" },
-    { image: roomImage, title: "Business Suites", description: "Elegant rooms for executives and diplomats" },
+  const experienceCards = [
+    { image: restaurantImage, title: "Spacious Rooms", description: "Spacious rooms with city views and premium amenities." },
+    { image: heroImage, title: "Modern Architecture", description: "Contemporary design blending with natural elements" },
+    { image: poolImage, title: "Strategic Location", description: "Minutes from government buildings and business centers" },
+    { image: roomImage, title: "Comfort Redefined", description: "Immerse yourself in thoughtfully designed interiors" },
+    { image: restaurantImage, title: "City Views & Nature", description: "Enjoy the perfect balance of luxury and practicality" },
+    { image: poolImage, title: "Designed for Every Stay", description: "Business or leisure, our rooms offer the versatility you need" }
   ];
 
   return (
@@ -33,144 +36,161 @@ const LocationAbujaPage = () => {
       <div className="min-h-screen">
         {/* Hero Section */}
         <section 
-          className="relative h-[80vh] flex items-center justify-center text-white"
+          className="relative h-screen flex items-center text-white"
           style={{
-            backgroundImage: `linear-gradient(rgba(30, 15, 15, 0.6), rgba(30, 15, 15, 0.4)), url(${restaurantImage})`,
+            backgroundImage: `linear-gradient(rgba(30, 15, 15, 0.7), rgba(30, 15, 15, 0.5)), url(${heroImage})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed'
+            backgroundPosition: 'center'
           }}
         >
-          <div className="container mx-auto px-4 text-center">
-            <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <MapPin className="h-6 w-6 text-primary" />
-                <span className="text-xl font-medium">Garki, Abuja FCT</span>
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between">
+              {/* Left Content */}
+              <div className="max-w-2xl space-y-6">
+                <h1 className="font-heading text-5xl md:text-6xl font-bold leading-tight">
+                  Abuja – Federal Capital Territory
+                </h1>
+                <p className="text-xl text-white/90 leading-relaxed">
+                  Experience modern luxury in the heart of Nigeria's capital. Perfect for business 
+                  travelers and those seeking sophisticated urban comfort.
+                </p>
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-md font-semibold">
+                  Book Now
+                </Button>
               </div>
-              <h1 className="font-heading text-4xl md:text-6xl font-bold leading-tight">
-                The Willow Nest Abuja
-              </h1>
-              <p className="text-xl md:text-2xl font-light text-white/90">
-                27 Executive Rooms in Nigeria's Capital
-              </p>
-              <p className="text-lg text-white/80 max-w-3xl mx-auto leading-relaxed">
-                Located in Garki, Abuja, this property offers elegant rooms tailored for business executives and leisure travelers. Minutes from the airport and government buildings.
-              </p>
+              
+              {/* Right Booking Form */}
+              <div className="w-full max-w-md">
+                <BookingForm variant="hero" />
+              </div>
             </div>
-          </div>
-          
-          {/* Booking Form Overlay */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4">
-            <BookingForm variant="hero" />
           </div>
         </section>
 
-        {/* Highlights Section */}
+        {/* Experience Abuja Section */}
         <section className="py-16 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-                Abuja Highlights
-              </h2>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Experience Abuja</h2>
               <p className="text-lg text-muted-foreground">
-                Executive luxury in the heart of Nigeria's capital city
+                Discover our elegant accommodations and modern facilities.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-              <Card className="card-luxury hover-lift">
-                <CardContent className="p-6 text-center">
-                  <Plane className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-heading text-xl font-semibold mb-2">Airport Proximity</h3>
-                  <p className="text-muted-foreground">Minutes from Nnamdi Azikiwe International Airport</p>
-                </CardContent>
-              </Card>
-
-              <Card className="card-luxury hover-lift">
-                <CardContent className="p-6 text-center">
-                  <Utensils className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-heading text-xl font-semibold mb-2">Premium Dining</h3>
-                  <p className="text-muted-foreground">Fine dining restaurant with international cuisine</p>
-                </CardContent>
-              </Card>
-
-              <Card className="card-luxury hover-lift">
-                <CardContent className="p-6 text-center">
-                  <Users className="h-12 w-12 text-primary mx-auto mb-4" />
-                  <h3 className="font-heading text-xl font-semibold mb-2">Business Hub</h3>
-                  <p className="text-muted-foreground">Modern business and meeting facilities</p>
-                </CardContent>
-              </Card>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              {experienceCards.map((item, index) => (
+                <div key={index} className="relative overflow-hidden rounded-lg aspect-square hover-lift">
+                  <img 
+                    src={item.image} 
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="font-heading text-lg font-bold mb-1">{item.title}</h3>
+                    <p className="text-xs text-white/90">{item.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Gallery Section */}
+        {/* Premium Amenities */}
         <section className="py-16 bg-luxury-cream">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Executive Facilities</h2>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Premium Amenities</h2>
               <p className="text-lg text-muted-foreground">
-                Premium amenities designed for the discerning traveler
+                Enjoy world-class facilities and services designed to make your stay unforgettable
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {gallery.map((item, index) => (
-                <Card key={index} className="card-luxury hover-lift overflow-hidden">
-                  <div className="relative h-64">
-                    <img 
-                      src={item.image} 
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <h3 className="font-heading text-xl font-bold">{item.title}</h3>
-                      <p className="text-white/80">{item.description}</p>
-                    </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {amenities.map((amenity, index) => (
+                <div key={index} className="text-center">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <amenity.icon className="h-8 w-8 text-primary" />
                   </div>
-                </Card>
+                  <h3 className="font-heading text-lg font-semibold mb-2">{amenity.title}</h3>
+                  <p className="text-sm text-muted-foreground">{amenity.description}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Amenities Section */}
+        {/* Contact and Why Choose Section */}
         <section className="py-16 bg-background">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Executive Amenities</h2>
-              <p className="text-lg text-muted-foreground">
-                Business-class facilities for the modern executive
-              </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Contact Information */}
+              <div>
+                <h2 className="font-heading text-2xl font-bold mb-6">Contact Information</h2>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        34 Ubiqja Crescent off Ladoke Akintola Boulevard, Garki II, FCT
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Phone className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">+234 (0) 813 111 1808</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <Mail className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">reservations.abj@thewillowshotels.com</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <Button className="mt-6 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-md font-semibold">
+                  Get Direction
+                </Button>
+              </div>
+              
+              {/* Why Choose Abuja */}
+              <div>
+                <h2 className="font-heading text-2xl font-bold mb-6">Why Choose Abuja</h2>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p className="text-sm text-muted-foreground">
+                      Few minutes from Nnamdi Azikiwe International Airport
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p className="text-sm text-muted-foreground">
+                      Walking distance to major government offices
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p className="text-sm text-muted-foreground">
+                      Close to shopping malls and business centers
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <p className="text-sm text-muted-foreground">
+                      Professional business services and meeting facilities
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {amenities.map((amenity, index) => (
-                <AmenityCard
-                  key={index}
-                  icon={amenity.icon}
-                  title={amenity.title}
-                  description={amenity.description}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Booking CTA */}
-        <section className="py-16 bg-secondary text-secondary-foreground">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-              Experience Executive Luxury
-            </h2>
-            <p className="text-lg mb-8 max-w-2xl mx-auto">
-              Book your stay at The Willow Nest Abuja and enjoy premium hospitality in Nigeria's capital.
-            </p>
-            <Button size="lg" variant="luxury" className="text-lg px-8 py-4">
-              Book Your Executive Stay
-            </Button>
           </div>
         </section>
       </div>
