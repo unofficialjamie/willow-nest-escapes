@@ -5,24 +5,71 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Upload, Image as ImageIcon, Save } from "lucide-react";
+import { Loader2, Upload, Image as ImageIcon, Save, Plus, Edit, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+interface PageSection {
+  id?: string;
+  page_name: string;
+  section_key: string;
+  section_title: string;
+  content_type: string;
+  data: any;
+  display_order: number;
+  is_active: boolean;
+}
 
 const AdminContent = () => {
   const { loading: authLoading } = useAdminAuth();
   const { toast } = useToast();
+  const [sections, setSections] = useState<PageSection[]>([]);
+  const [selectedPage, setSelectedPage] = useState("home");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingSection, setEditingSection] = useState<PageSection | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: string }>({});
 
-  const handleImageUpload = async (file: File, category: string) => {
+  const [formData, setFormData] = useState<PageSection>({
+    page_name: "home",
+    section_key: "",
+    section_title: "",
+    content_type: "hero",
+    data: {},
+    display_order: 0,
+    is_active: true,
+  });
+
+  useEffect(() => {
+    fetchSections();
+  }, [selectedPage]);
+
+  const fetchSections = async () => {
+    const { data, error } = await supabase
+      .from("page_sections")
+      .select("*")
+      .eq("page_name", selectedPage)
+      .order("display_order", { ascending: true });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch sections",
+        variant: "destructive",
+      });
+    } else {
+      setSections(data || []);
+    }
+  };
+
+  const handleImageUpload = async (file: File, path: string) => {
     setUploading(true);
-    setUploadProgress({ ...uploadProgress, [category]: "Uploading..." });
-
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${category}-${Date.now()}.${fileExt}`;
-      const filePath = `${category}/${fileName}`;
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${path}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('website-images')
@@ -36,19 +83,99 @@ const AdminContent = () => {
 
       toast({
         title: "Success",
-        description: `Image uploaded successfully! URL: ${publicUrl}`,
+        description: "Image uploaded successfully!",
       });
 
-      setUploadProgress({ ...uploadProgress, [category]: publicUrl });
+      return publicUrl;
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
+      return null;
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (editingSection?.id) {
+      const { error } = await supabase
+        .from("page_sections")
+        .update(formData)
+        .eq("id", editingSection.id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update section",
+          variant: "destructive",
+        });
+        return;
+      }
+      toast({ title: "Success", description: "Section updated successfully" });
+    } else {
+      const { error } = await supabase
+        .from("page_sections")
+        .insert(formData);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to create section",
+          variant: "destructive",
+        });
+        return;
+      }
+      toast({ title: "Success", description: "Section created successfully" });
+    }
+
+    setIsDialogOpen(false);
+    resetForm();
+    fetchSections();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this section?")) return;
+
+    const { error } = await supabase
+      .from("page_sections")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete section",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({ title: "Success", description: "Section deleted successfully" });
+    fetchSections();
+  };
+
+  const openEditDialog = (section: PageSection) => {
+    setEditingSection(section);
+    setFormData(section);
+    setIsDialogOpen(true);
+  };
+
+  const resetForm = () => {
+    setEditingSection(null);
+    setFormData({
+      page_name: selectedPage,
+      section_key: "",
+      section_title: "",
+      content_type: "hero",
+      data: {},
+      display_order: 0,
+      is_active: true,
+    });
   };
 
   if (authLoading) {
@@ -67,127 +194,217 @@ const AdminContent = () => {
     { id: "logos", label: "Logos & Icons", description: "Brand assets and icons" },
   ];
 
+  const pages = [
+    { value: "home", label: "Home Page" },
+    { value: "about", label: "About Page" },
+    { value: "facilities", label: "Facilities Page" },
+    { value: "ibadan", label: "Ibadan Location" },
+    { value: "abuja", label: "Abuja Location" },
+    { value: "ogbomosho", label: "Ogbomosho Location" },
+    { value: "contact", label: "Contact Page" },
+  ];
+
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Content & Media Manager</h1>
+        <h1 className="text-4xl font-bold mb-2">Content Management</h1>
         <p className="text-muted-foreground text-lg">
-          Upload and manage images for your website across all locations
+          Manage all page sections, images, and content across your website
         </p>
       </div>
 
-      <Tabs defaultValue="upload" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="upload">Upload Images</TabsTrigger>
-          <TabsTrigger value="manage">Manage Content</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="upload" className="space-y-6 mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {categories.map((category) => (
-              <Card key={category.id}>
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 rounded-lg bg-primary/10">
-                      <ImageIcon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle>{category.label}</CardTitle>
-                      <CardDescription>{category.description}</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor={`file-${category.id}`}>Select Image</Label>
-                    <Input
-                      id={`file-${category.id}`}
-                      type="file"
-                      accept="image/*"
-                      disabled={uploading}
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleImageUpload(file, category.id);
-                      }}
-                      className="mt-2"
-                    />
-                  </div>
-                  {uploadProgress[category.id] && (
-                    <div className="p-3 bg-muted rounded-lg">
-                      <p className="text-sm font-medium mb-1">Latest Upload:</p>
-                      <p className="text-xs text-muted-foreground break-all">
-                        {uploadProgress[category.id]}
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+      <div className="flex justify-between items-center mb-6">
+        <Select value={selectedPage} onValueChange={setSelectedPage}>
+          <SelectTrigger className="w-[250px]">
+            <SelectValue placeholder="Select page" />
+          </SelectTrigger>
+          <SelectContent>
+            {pages.map((page) => (
+              <SelectItem key={page.value} value={page.value}>
+                {page.label}
+              </SelectItem>
             ))}
-          </div>
+          </SelectContent>
+        </Select>
 
-          <Card className="bg-blue-50 border-blue-200">
-            <CardHeader>
-              <CardTitle className="text-blue-900">Upload Instructions</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-blue-800 space-y-2">
-              <p>• <strong>Hero Images:</strong> Recommended size 1920x1080px for best quality</p>
-              <p>• <strong>Room Images:</strong> Use 1200x800px for consistent display</p>
-              <p>• <strong>Facilities:</strong> 800x600px works well for facility showcases</p>
-              <p>• After upload, copy the URL and paste it in the Pages Management section</p>
-              <p>• Supported formats: JPG, PNG, WebP (WebP recommended for faster loading)</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="manage" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Management Tools</CardTitle>
-              <CardDescription>
-                Manage your website content across different sections
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="border-2">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Quick Links</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start" asChild>
-                      <a href="/admin/pages">
-                        Edit Page Content
-                      </a>
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start" asChild>
-                      <a href="/admin/rooms">
-                        Manage Rooms
-                      </a>
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start" asChild>
-                      <a href="/admin/settings">
-                        Site Settings
-                      </a>
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-2">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Content Tips</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm text-muted-foreground space-y-2">
-                    <p>• Keep image file sizes under 2MB for faster loading</p>
-                    <p>• Use descriptive file names for better organization</p>
-                    <p>• Maintain consistent aspect ratios within each category</p>
-                    <p>• Update room images seasonally to keep content fresh</p>
-                  </CardContent>
-                </Card>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Section
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingSection ? "Edit Section" : "Add New Section"}</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label>Section Key (unique identifier)</Label>
+                <Input
+                  value={formData.section_key}
+                  onChange={(e) => setFormData({ ...formData, section_key: e.target.value })}
+                  placeholder="hero_section"
+                  required
+                />
               </div>
+
+              <div>
+                <Label>Section Title</Label>
+                <Input
+                  value={formData.section_title}
+                  onChange={(e) => setFormData({ ...formData, section_title: e.target.value })}
+                  placeholder="Hero Section"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label>Content Type</Label>
+                <Select
+                  value={formData.content_type}
+                  onValueChange={(value) => setFormData({ ...formData, content_type: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hero">Hero Section</SelectItem>
+                    <SelectItem value="text">Text Content</SelectItem>
+                    <SelectItem value="image">Image</SelectItem>
+                    <SelectItem value="card">Card</SelectItem>
+                    <SelectItem value="list">List</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label>Content Data (JSON)</Label>
+                <Textarea
+                  value={JSON.stringify(formData.data, null, 2)}
+                  onChange={(e) => {
+                    try {
+                      setFormData({ ...formData, data: JSON.parse(e.target.value) });
+                    } catch (err) {
+                      // Invalid JSON, don't update
+                    }
+                  }}
+                  placeholder='{"title": "Welcome", "description": "...", "image": "url"}'
+                  rows={10}
+                  className="font-mono text-sm"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Enter JSON data. Example: {`{"title": "Welcome", "subtitle": "...", "image": "url"}`}
+                </p>
+              </div>
+
+              <div>
+                <Label>Image Upload</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const url = await handleImageUpload(file, selectedPage);
+                    if (url) {
+                      setFormData({
+                        ...formData,
+                        data: { ...formData.data, image: url }
+                      });
+                    }
+                  }}
+                  disabled={uploading}
+                />
+                {formData.data?.image && (
+                  <img src={formData.data.image} alt="Preview" className="w-32 h-32 object-cover rounded mt-2" />
+                )}
+              </div>
+
+              <div>
+                <Label>Display Order</Label>
+                <Input
+                  type="number"
+                  value={formData.display_order}
+                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="is_active"
+                  checked={formData.is_active}
+                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                />
+                <Label htmlFor="is_active">Active</Label>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={uploading}>
+                {editingSection ? "Update Section" : "Create Section"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4">
+        {sections.length === 0 ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <p className="text-muted-foreground">No sections found for this page. Add your first section to get started.</p>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        ) : (
+          sections.map((section) => (
+            <Card key={section.id}>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle>{section.section_title}</CardTitle>
+                    <CardDescription>
+                      {section.section_key} • {section.content_type} • Order: {section.display_order}
+                    </CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openEditDialog(section)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(section.id!)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-muted p-4 rounded-lg">
+                  <pre className="text-xs overflow-auto">
+                    {JSON.stringify(section.data, null, 2)}
+                  </pre>
+                </div>
+                {section.data?.image && (
+                  <img
+                    src={section.data.image}
+                    alt={section.section_title}
+                    className="w-48 h-32 object-cover rounded mt-4"
+                  />
+                )}
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
     </div>
   );
 };
