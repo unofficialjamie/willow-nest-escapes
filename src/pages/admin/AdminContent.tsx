@@ -388,18 +388,99 @@ const AdminContent = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="bg-muted p-4 rounded-lg">
-                  <pre className="text-xs overflow-auto">
-                    {JSON.stringify(section.data, null, 2)}
-                  </pre>
+                {/* Render user-friendly content preview */}
+                <div className="space-y-4">
+                  {/* Show image if exists */}
+                  {section.data?.image && (
+                    <div>
+                      <p className="text-sm font-medium mb-2">Image:</p>
+                      <img
+                        src={section.data.image}
+                        alt={section.section_title}
+                        className="w-full max-w-md h-48 object-cover rounded"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Show main fields */}
+                  {Object.entries(section.data || {}).map(([key, value]) => {
+                    // Skip image as it's already shown
+                    if (key === 'image') return null;
+                    
+                    // Handle arrays (like items, values, etc.)
+                    if (Array.isArray(value)) {
+                      return (
+                        <div key={key} className="border-l-2 border-primary pl-4">
+                          <p className="text-sm font-medium mb-2 capitalize">{key.replace(/_/g, ' ')}:</p>
+                          <div className="space-y-3">
+                            {value.map((item: any, idx: number) => (
+                              <div key={idx} className="bg-muted/50 p-3 rounded text-sm">
+                                {typeof item === 'object' ? (
+                                  <div className="space-y-1">
+                                    {Object.entries(item).map(([itemKey, itemValue]) => (
+                                      <div key={itemKey}>
+                                        <span className="font-medium capitalize">{itemKey.replace(/_/g, ' ')}: </span>
+                                        <span className="text-muted-foreground">
+                                          {typeof itemValue === 'string' && itemValue.startsWith('data:image') 
+                                            ? '[Image Data]' 
+                                            : String(itemValue)}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <span>{String(item)}</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    // Handle objects
+                    if (typeof value === 'object' && value !== null) {
+                      return (
+                        <div key={key} className="border-l-2 border-primary pl-4">
+                          <p className="text-sm font-medium mb-2 capitalize">{key.replace(/_/g, ' ')}:</p>
+                          <div className="bg-muted/50 p-3 rounded text-sm space-y-1">
+                            {Object.entries(value).map(([subKey, subValue]) => (
+                              <div key={subKey}>
+                                <span className="font-medium capitalize">{subKey.replace(/_/g, ' ')}: </span>
+                                <span className="text-muted-foreground">{String(subValue)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    // Handle strings (skip very long base64 strings)
+                    if (typeof value === 'string' && value.startsWith('data:image')) {
+                      return null;
+                    }
+                    
+                    // Handle primitive values
+                    return (
+                      <div key={key}>
+                        <span className="text-sm font-medium capitalize">{key.replace(/_/g, ' ')}: </span>
+                        <span className="text-sm text-muted-foreground">{String(value)}</span>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Collapsible raw JSON for advanced users */}
+                  <details className="mt-4">
+                    <summary className="text-sm font-medium cursor-pointer text-muted-foreground hover:text-foreground">
+                      View Raw JSON
+                    </summary>
+                    <div className="bg-muted p-4 rounded-lg mt-2">
+                      <pre className="text-xs overflow-auto max-h-96">
+                        {JSON.stringify(section.data, null, 2)}
+                      </pre>
+                    </div>
+                  </details>
                 </div>
-                {section.data?.image && (
-                  <img
-                    src={section.data.image}
-                    alt={section.section_title}
-                    className="w-48 h-32 object-cover rounded mt-4"
-                  />
-                )}
               </CardContent>
             </Card>
           ))
