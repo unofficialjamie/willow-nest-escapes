@@ -388,7 +388,7 @@ const AdminContent = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                {/* Render user-friendly content preview */}
+                {/* Content Preview - Updated */}
                 <div className="space-y-4">
                   {/* Show image if exists */}
                   {section.data?.image && (
