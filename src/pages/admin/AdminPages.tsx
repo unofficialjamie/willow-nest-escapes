@@ -8,22 +8,47 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Edit, Trash2, Image as ImageIcon, Save } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Loader2, Plus, Edit, Trash2, Copy, ArrowLeft, Save, Upload } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-interface PageContent {
+interface PageSection {
   id: string;
   page_name: string;
   section_key: string;
+  section_title: string;
   content_type: string;
-  content_value: string | null;
-  display_order: number | null;
+  data: any;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
-const PAGES = [
-  "home", "about", "contact", "facilities", "faq", 
-  "hotel-policies", "privacy-policy", "locations",
-  "location-abuja", "location-ibadan", "location-ogbomosho"
+interface PageInfo {
+  name: string;
+  title: string;
+  route: string;
+}
+
+const PAGES: PageInfo[] = [
+  { name: "home", title: "Home Page", route: "/" },
+  { name: "about", title: "About Page", route: "/about" },
+  { name: "contact", title: "Contact Page", route: "/contact" },
+  { name: "facilities", title: "Facilities Page", route: "/facilities" },
+  { name: "faq", title: "FAQ Page", route: "/faq" },
+  { name: "hotel-policies", title: "Hotel Policies", route: "/hotel-policies" },
+  { name: "privacy-policy", title: "Privacy Policy", route: "/privacy-policy" },
+  { name: "locations", title: "Locations Page", route: "/locations" },
+  { name: "location-abuja", title: "Abuja Location", route: "/locations/abuja" },
+  { name: "location-ibadan", title: "Ibadan Location", route: "/locations/ibadan" },
+  { name: "location-ogbomosho", title: "Ogbomosho Location", route: "/locations/ogbomosho" },
 ];
 
 const CONTENT_TYPES = ["text", "heading", "image", "button_text", "button_link", "description"];
@@ -31,30 +56,24 @@ const CONTENT_TYPES = ["text", "heading", "image", "button_text", "button_link",
 const AdminPages = () => {
   const { loading: authLoading } = useAdminAuth();
   const { toast } = useToast();
-  const [selectedPage, setSelectedPage] = useState("home");
-  const [pageContent, setPageContent] = useState<PageContent[]>([]);
+  const [view, setView] = useState<"list" | "edit">("list");
+  const [selectedPage, setSelectedPage] = useState<string | null>(null);
+  const [pageSections, setPageSections] = useState<PageSection[]>([]);
   const [loading, setLoading] = useState(false);
-  const [editingItem, setEditingItem] = useState<PageContent | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingSection, setEditingSection] = useState<PageSection | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    if (selectedPage) {
-      fetchPageContent();
-    }
-  }, [selectedPage]);
-
-  const fetchPageContent = async () => {
+  const fetchPageSections = async (pageName: string) => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from("page_content")
+        .from("page_sections")
         .select("*")
-        .eq("page_name", selectedPage)
+        .eq("page_name", pageName)
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      setPageContent(data || []);
+      setPageSections(data || []);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -66,27 +85,100 @@ const AdminPages = () => {
     }
   };
 
-  const handleImageUpload = async (file: File, itemId: string) => {
+  const handleEditPage = (pageName: string) => {
+    setSelectedPage(pageName);
+    setView("edit");
+    fetchPageSections(pageName);
+  };
+
+  const handleBackToList = () => {
+    setView("list");
+    setSelectedPage(null);
+    setPageSections([]);
+    setEditingSection(null);
+  };
+
+  const handleDuplicatePage = async (pageName: string) => {
+    if (!confirm(`Duplicate ${pageName} page?`)) return;
+
+    try {
+      const { data: sections, error: fetchError } = await supabase
+        .from("page_sections")
+        .select("*")
+        .eq("page_name", pageName);
+
+      if (fetchError) throw fetchError;
+
+      const newPageName = `${pageName}-copy`;
+      const duplicatedSections = sections?.map(({ id, ...rest }) => ({
+        ...rest,
+        page_name: newPageName,
+      }));
+
+      const { error: insertError } = await supabase
+        .from("page_sections")
+        .insert(duplicatedSections || []);
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Success",
+        description: `Page duplicated as ${newPageName}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeletePage = async (pageName: string) => {
+    if (!confirm(`Delete all content for ${pageName}? This cannot be undone.`)) return;
+
+    try {
+      const { error } = await supabase
+        .from("page_sections")
+        .delete()
+        .eq("page_name", pageName);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Page deleted successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleImageUpload = async (file: File, sectionId: string) => {
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${selectedPage}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('website-images')
+        .from("website-images")
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('website-images')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("website-images").getPublicUrl(filePath);
 
       const { error: updateError } = await supabase
-        .from("page_content")
-        .update({ content_value: publicUrl })
-        .eq("id", itemId);
+        .from("page_sections")
+        .update({ data: { url: publicUrl } })
+        .eq("id", sectionId);
 
       if (updateError) throw updateError;
 
@@ -94,7 +186,8 @@ const AdminPages = () => {
         title: "Success",
         description: "Image uploaded successfully",
       });
-      fetchPageContent();
+      
+      if (selectedPage) fetchPageSections(selectedPage);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -106,59 +199,44 @@ const AdminPages = () => {
     }
   };
 
-  const handleSave = async () => {
-    if (!editingItem) return;
+  const handleSaveSection = async () => {
+    if (!editingSection) return;
 
     try {
-      const { error } = await supabase
-        .from("page_content")
-        .update({
-          content_value: editingItem.content_value,
-          section_key: editingItem.section_key,
-          content_type: editingItem.content_type,
-          display_order: editingItem.display_order,
-        })
-        .eq("id", editingItem.id);
+      if (editingSection.id) {
+        const { error } = await supabase
+          .from("page_sections")
+          .update({
+            section_key: editingSection.section_key,
+            section_title: editingSection.section_title,
+            content_type: editingSection.content_type,
+            data: editingSection.data,
+            display_order: editingSection.display_order,
+          })
+          .eq("id", editingSection.id);
 
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Content updated successfully",
-      });
-      setIsDialogOpen(false);
-      fetchPageContent();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleCreate = async () => {
-    if (!editingItem) return;
-
-    try {
-      const { error } = await supabase
-        .from("page_content")
-        .insert({
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("page_sections").insert({
           page_name: selectedPage,
-          section_key: editingItem.section_key,
-          content_type: editingItem.content_type,
-          content_value: editingItem.content_value,
-          display_order: editingItem.display_order,
+          section_key: editingSection.section_key,
+          section_title: editingSection.section_title,
+          content_type: editingSection.content_type,
+          data: editingSection.data,
+          display_order: editingSection.display_order,
+          is_active: true,
         });
 
-      if (error) throw error;
+        if (error) throw error;
+      }
 
       toast({
         title: "Success",
-        description: "Content created successfully",
+        description: editingSection.id ? "Section updated" : "Section created",
       });
-      setIsDialogOpen(false);
-      fetchPageContent();
+      
+      setEditingSection(null);
+      if (selectedPage) fetchPageSections(selectedPage);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -168,12 +246,12 @@ const AdminPages = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this content?")) return;
+  const handleDeleteSection = async (id: string) => {
+    if (!confirm("Delete this section?")) return;
 
     try {
       const { error } = await supabase
-        .from("page_content")
+        .from("page_sections")
         .delete()
         .eq("id", id);
 
@@ -181,9 +259,10 @@ const AdminPages = () => {
 
       toast({
         title: "Success",
-        description: "Content deleted successfully",
+        description: "Section deleted successfully",
       });
-      fetchPageContent();
+      
+      if (selectedPage) fetchPageSections(selectedPage);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -201,56 +280,126 @@ const AdminPages = () => {
     );
   }
 
-  return (
-    <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Pages Management</h1>
-        <p className="text-muted-foreground text-lg">Edit all website content like a professional CMS - control text, images, buttons, and more</p>
-      </div>
+  // List View - WordPress Style
+  if (view === "list") {
+    return (
+      <div className="p-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2">Pages</h1>
+          <p className="text-muted-foreground text-lg">
+            Manage all your website pages in one place
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <Card className="lg:col-span-1">
+        <Card>
           <CardHeader>
-            <CardTitle>Select Page</CardTitle>
-            <CardDescription>Choose a page to edit</CardDescription>
+            <CardTitle>All Pages</CardTitle>
+            <CardDescription>
+              Click Edit to modify page content, or use Duplicate to create a copy
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2">
-            {PAGES.map((page) => (
-              <Button
-                key={page}
-                variant={selectedPage === page ? "default" : "outline"}
-                className="w-full justify-start"
-                onClick={() => setSelectedPage(page)}
-              >
-                {page.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-              </Button>
-            ))}
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Page Title</TableHead>
+                  <TableHead>Page Name</TableHead>
+                  <TableHead>Route</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {PAGES.map((page) => (
+                  <TableRow key={page.name}>
+                    <TableCell className="font-medium">{page.title}</TableCell>
+                    <TableCell>{page.name}</TableCell>
+                    <TableCell className="text-muted-foreground">{page.route}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditPage(page.name)}
+                        >
+                          <Edit className="w-4 h-4 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDuplicatePage(page.name)}
+                        >
+                          <Copy className="w-4 h-4 mr-1" />
+                          Duplicate
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDeletePage(page.name)}
+                        >
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
+      </div>
+    );
+  }
 
-        <div className="lg:col-span-3">
+  // Edit View - Elementor Style Page Builder
+  const pageInfo = PAGES.find((p) => p.name === selectedPage);
+
+  return (
+    <div className="p-8">
+      <div className="mb-6">
+        <Button variant="outline" onClick={handleBackToList} className="mb-4">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Pages
+        </Button>
+        <h1 className="text-4xl font-bold mb-2">
+          Edit: {pageInfo?.title || selectedPage}
+        </h1>
+        <p className="text-muted-foreground text-lg">
+          Arrange and edit all content sections for this page
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Content Sections List */}
+        <div className="lg:col-span-2">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>{selectedPage.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</CardTitle>
-                  <CardDescription>Edit content sections for this page</CardDescription>
+                  <CardTitle>Page Sections</CardTitle>
+                  <CardDescription>
+                    Sections are displayed in order from top to bottom
+                  </CardDescription>
                 </div>
                 <Button
                   onClick={() => {
-                    setEditingItem({
+                    setEditingSection({
                       id: "",
-                      page_name: selectedPage,
+                      page_name: selectedPage || "",
                       section_key: "",
+                      section_title: "",
                       content_type: "text",
-                      content_value: "",
-                      display_order: pageContent.length + 1,
+                      data: {},
+                      display_order: pageSections.length + 1,
+                      is_active: true,
+                      created_at: "",
+                      updated_at: "",
                     });
-                    setIsDialogOpen(true);
                   }}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Content
+                  Add Section
                 </Button>
               </div>
             </CardHeader>
@@ -259,30 +408,35 @@ const AdminPages = () => {
                 <div className="flex justify-center py-8">
                   <Loader2 className="w-8 h-8 animate-spin" />
                 </div>
-              ) : pageContent.length === 0 ? (
+              ) : pageSections.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
-                  No content yet. Click "Add Content" to start.
+                  No sections yet. Click "Add Section" to start building your page.
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {pageContent.map((item) => (
-                    <Card key={item.id}>
-                      <CardContent className="pt-6">
+                <div className="space-y-3">
+                  {pageSections.map((section, index) => (
+                    <Card key={section.id} className="border-l-4 border-l-primary">
+                      <CardContent className="pt-4">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
-                                {item.content_type}
+                              <span className="text-xs font-bold text-muted-foreground bg-muted px-2 py-1 rounded">
+                                #{index + 1}
                               </span>
-                              <span className="text-sm font-semibold">{item.section_key}</span>
+                              <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
+                                {section.content_type}
+                              </span>
+                              <span className="text-sm font-semibold">
+                                {section.section_key}
+                              </span>
                             </div>
-                            {item.content_type === "image" ? (
+                            {section.content_type === "image" ? (
                               <div className="space-y-2">
-                                {item.content_value && (
-                                  <img 
-                                    src={item.content_value} 
-                                    alt={item.section_key}
-                                    className="w-48 h-32 object-cover rounded"
+                                {section.data?.url && (
+                                  <img
+                                    src={section.data.url}
+                                    alt={section.section_key}
+                                    className="w-full max-w-xs h-32 object-cover rounded"
                                   />
                                 )}
                                 <Input
@@ -291,31 +445,30 @@ const AdminPages = () => {
                                   disabled={uploading}
                                   onChange={(e) => {
                                     const file = e.target.files?.[0];
-                                    if (file) handleImageUpload(file, item.id);
+                                    if (file) handleImageUpload(file, section.id);
                                   }}
                                 />
                               </div>
                             ) : (
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {item.content_value || "No content"}
+                              <p className="text-sm text-muted-foreground line-clamp-3">
+                                {typeof section.data === "string" 
+                                  ? section.data 
+                                  : section.data?.text || section.data?.value || "No content"}
                               </p>
                             )}
                           </div>
                           <div className="flex gap-2">
                             <Button
-                              size="icon"
+                              size="sm"
                               variant="outline"
-                              onClick={() => {
-                                setEditingItem(item);
-                                setIsDialogOpen(true);
-                              }}
+                              onClick={() => setEditingSection(section)}
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
                             <Button
-                              size="icon"
-                              variant="outline"
-                              onClick={() => handleDelete(item.id)}
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeleteSection(section.id)}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -329,94 +482,158 @@ const AdminPages = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingItem?.id ? "Edit Content" : "Add Content"}</DialogTitle>
-            <DialogDescription>
-              {editingItem?.id ? "Update the content below" : "Create new content section"}
-            </DialogDescription>
-          </DialogHeader>
-          {editingItem && (
-            <div className="space-y-4">
-              <div>
-                <Label>Section Key</Label>
-                <Input
-                  value={editingItem.section_key}
-                  onChange={(e) =>
-                    setEditingItem({ ...editingItem, section_key: e.target.value })
-                  }
-                  placeholder="e.g., hero-title, about-description"
-                />
-              </div>
-              <div>
-                <Label>Content Type</Label>
-                <Select
-                  value={editingItem.content_type}
-                  onValueChange={(value) =>
-                    setEditingItem({ ...editingItem, content_type: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CONTENT_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Content Value</Label>
-                {editingItem.content_type === "text" || 
-                 editingItem.content_type === "heading" || 
-                 editingItem.content_type === "description" ? (
-                  <Textarea
-                    value={editingItem.content_value || ""}
-                    onChange={(e) =>
-                      setEditingItem({ ...editingItem, content_value: e.target.value })
-                    }
-                    rows={5}
-                  />
-                ) : (
-                  <Input
-                    value={editingItem.content_value || ""}
-                    onChange={(e) =>
-                      setEditingItem({ ...editingItem, content_value: e.target.value })
-                    }
-                    placeholder={editingItem.content_type === "image" ? "Image URL" : "Content"}
-                  />
-                )}
-              </div>
-              <div>
-                <Label>Display Order</Label>
-                <Input
-                  type="number"
-                  value={editingItem.display_order || 0}
-                  onChange={(e) =>
-                    setEditingItem({
-                      ...editingItem,
-                      display_order: parseInt(e.target.value),
-                    })
-                  }
-                />
-              </div>
-              <Button
-                className="w-full"
-                onClick={editingItem.id ? handleSave : handleCreate}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {editingItem.id ? "Save Changes" : "Create Content"}
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+        {/* Section Editor Sidebar */}
+        <div className="lg:col-span-1">
+          <Card className="sticky top-4">
+            <CardHeader>
+              <CardTitle>
+                {editingSection?.id ? "Edit Section" : "New Section"}
+              </CardTitle>
+              <CardDescription>
+                {editingSection ? "Modify the section details below" : "Select a section to edit"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {editingSection ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Section Key</Label>
+                    <Input
+                      value={editingSection.section_key}
+                      onChange={(e) =>
+                        setEditingSection({
+                          ...editingSection,
+                          section_key: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., hero_title, about_description"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Use underscores, e.g.: hero_title, section_image
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label>Section Title (Display Name)</Label>
+                    <Input
+                      value={editingSection.section_title}
+                      onChange={(e) =>
+                        setEditingSection({
+                          ...editingSection,
+                          section_title: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., Hero Title, About Description"
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Content Type</Label>
+                    <Select
+                      value={editingSection.content_type}
+                      onValueChange={(value) =>
+                        setEditingSection({
+                          ...editingSection,
+                          content_type: value,
+                        })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CONTENT_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Content Value</Label>
+                    {editingSection.content_type === "text" ||
+                    editingSection.content_type === "description" ? (
+                      <Textarea
+                        value={
+                          typeof editingSection.data === "string"
+                            ? editingSection.data
+                            : editingSection.data?.text || editingSection.data?.value || ""
+                        }
+                        onChange={(e) =>
+                          setEditingSection({
+                            ...editingSection,
+                            data: { text: e.target.value },
+                          })
+                        }
+                        rows={5}
+                        placeholder="Enter your content here..."
+                      />
+                    ) : (
+                      <Input
+                        value={
+                          typeof editingSection.data === "string"
+                            ? editingSection.data
+                            : editingSection.data?.url || editingSection.data?.value || ""
+                        }
+                        onChange={(e) =>
+                          setEditingSection({
+                            ...editingSection,
+                            data: editingSection.content_type === "image" 
+                              ? { url: e.target.value }
+                              : { value: e.target.value },
+                          })
+                        }
+                        placeholder={
+                          editingSection.content_type === "image"
+                            ? "Image URL or upload below"
+                            : "Enter content"
+                        }
+                      />
+                    )}
+                  </div>
+
+                  <div>
+                    <Label>Display Order</Label>
+                    <Input
+                      type="number"
+                      value={editingSection.display_order || 0}
+                      onChange={(e) =>
+                        setEditingSection({
+                          ...editingSection,
+                          display_order: parseInt(e.target.value) || 0,
+                        })
+                      }
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Lower numbers appear first
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button className="flex-1" onClick={handleSaveSection}>
+                      <Save className="w-4 h-4 mr-2" />
+                      Save
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setEditingSection(null)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  Click on a section or "Add Section" to start editing
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };

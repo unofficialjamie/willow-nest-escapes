@@ -40,7 +40,6 @@ function AppContent() {
         <Routes>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/pages" element={<AdminPages />} />
-          <Route path="/admin/content" element={<AdminContent />} />
           <Route path="/admin/rooms" element={<AdminRooms />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin/seed" element={<SeedData />} />

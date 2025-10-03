@@ -31,7 +31,6 @@ const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard, end: true },
   { title: "Pages", url: "/admin/pages", icon: FileText },
   { title: "Rooms", url: "/admin/rooms", icon: Hotel },
-  { title: "Content", url: "/admin/content", icon: Image },
   { title: "Settings", url: "/admin/settings", icon: Settings },
   { title: "Seed Data", url: "/admin/seed", icon: Database },
 ];
