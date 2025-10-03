@@ -56,13 +56,11 @@ const AdminLoginPage = () => {
           throw new Error("No user data returned");
         }
 
-        // Add admin role
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .insert({
-            user_id: authData.user.id,
-            role: "admin",
-          });
+        // Add admin role using security definer function
+        const { error: roleError } = await supabase.rpc("assign_user_role", {
+          _user_id: authData.user.id,
+          _role: "admin",
+        });
 
         if (roleError) throw roleError;
 

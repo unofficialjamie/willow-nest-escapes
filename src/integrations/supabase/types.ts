@@ -49,7 +49,9 @@ export type Database = {
       }
       rooms: {
         Row: {
+          amenities: Json | null
           button_link: string | null
+          button_text: string | null
           created_at: string | null
           description: string | null
           display_order: number | null
@@ -59,11 +61,14 @@ export type Database = {
           location: string
           name: string
           occupancy: string | null
+          price: number | null
           size: string | null
           updated_at: string | null
         }
         Insert: {
+          amenities?: Json | null
           button_link?: string | null
+          button_text?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
@@ -73,11 +78,14 @@ export type Database = {
           location: string
           name: string
           occupancy?: string | null
+          price?: number | null
           size?: string | null
           updated_at?: string | null
         }
         Update: {
+          amenities?: Json | null
           button_link?: string | null
+          button_text?: string | null
           created_at?: string | null
           description?: string | null
           display_order?: number | null
@@ -87,6 +95,7 @@ export type Database = {
           location?: string
           name?: string
           occupancy?: string | null
+          price?: number | null
           size?: string | null
           updated_at?: string | null
         }
@@ -142,6 +151,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
