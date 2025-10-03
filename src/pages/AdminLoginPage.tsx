@@ -25,7 +25,7 @@ const AdminLoginPage = () => {
           .select("role")
           .eq("user_id", session.user.id)
           .eq("role", "admin")
-          .single();
+          .maybeSingle();
 
         if (roleData) {
           navigate("/admin");
@@ -87,7 +87,7 @@ const AdminLoginPage = () => {
           .select("role")
           .eq("user_id", data.user.id)
           .eq("role", "admin")
-          .single();
+          .maybeSingle();
 
         if (roleError || !roleData) {
           await supabase.auth.signOut();

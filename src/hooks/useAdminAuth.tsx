@@ -21,12 +21,14 @@ export const useAdminAuth = () => {
       setUser(session.user);
 
       // Check admin role
-      const { data: roleData } = await supabase
+      const { data: roleData, error: roleError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", session.user.id)
         .eq("role", "admin")
         .maybeSingle();
+
+      console.log("Admin role check:", { roleData, roleError, userId: session.user.id });
 
       if (!roleData) {
         navigate("/admin/login");
