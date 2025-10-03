@@ -84,7 +84,7 @@ const FacilitiesPage = () => {
                   <CardContent className="p-6">
                     <h3 className="font-heading text-xl font-semibold mb-4 text-primary">{category.title}</h3>
                     <ul className="space-y-2 text-muted-foreground">
-                      {category.items.map((item: string, idx: number) => (
+                      {(category.services || category.items || []).map((item: string, idx: number) => (
                         <li key={idx}>• {item}</li>
                       ))}
                     </ul>
