@@ -24,6 +24,7 @@ import AdminPages from "./pages/admin/AdminPages";
 import AdminRooms from "./pages/admin/AdminRooms";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminContent from "./pages/admin/AdminContent";
+import SeedData from "./pages/admin/SeedData";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ function AppContent() {
           <Route path="/admin/content" element={<AdminContent />} />
           <Route path="/admin/rooms" element={<AdminRooms />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
+          <Route path="/admin/seed" element={<SeedData />} />
         </Routes>
       </AdminLayout>
     );

@@ -22,6 +22,7 @@ import {
   Settings,
   LogOut,
   Menu,
+  Database,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -32,6 +33,7 @@ const menuItems = [
   { title: "Rooms", url: "/admin/rooms", icon: Hotel },
   { title: "Content", url: "/admin/content", icon: Image },
   { title: "Settings", url: "/admin/settings", icon: Settings },
+  { title: "Seed Data", url: "/admin/seed", icon: Database },
 ];
 
 function AdminSidebar() {

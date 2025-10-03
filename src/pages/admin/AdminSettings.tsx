@@ -43,18 +43,33 @@ const AdminSettings = () => {
         acc[setting.setting_key] = setting.setting_value;
         return acc;
       }, {} as any);
-      setSiteSettings(settings);
+      setSiteSettings({
+        header_logo: settings.site_logo || "",
+        footer_logo: settings.site_logo || "",
+        favicon: settings.site_favicon || "",
+      });
     }
   };
 
   const handleSaveSettings = async () => {
     setLoading(true);
     
-    for (const [key, value] of Object.entries(siteSettings)) {
+    // Save header logo as site_logo
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'site_logo', setting_value: siteSettings.header_logo });
+
+    // Save footer logo separately if different
+    if (siteSettings.footer_logo && siteSettings.footer_logo !== siteSettings.header_logo) {
       await supabase
         .from("site_settings")
-        .upsert({ setting_key: key, setting_value: value, setting_type: 'image' });
+        .upsert({ setting_key: 'footer_logo', setting_value: siteSettings.footer_logo });
     }
+
+    // Save favicon
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'site_favicon', setting_value: siteSettings.favicon });
 
     toast({ title: "Success", description: "Settings saved successfully" });
     setLoading(false);
