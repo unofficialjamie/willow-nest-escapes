@@ -503,24 +503,57 @@ const AdminPages = () => {
         );
       }
 
-      // Handle button CTAs (look for _link pattern)
-      if (key.includes('cta_') && !key.includes('_link') && typeof value === 'string') {
-        const linkKey = `${key}_link`;
-        const linkValue = path ? 
-          path.split('.').reduce((obj: any, k: string) => obj?.[k], data)?.[linkKey] :
-          data[linkKey];
+      // Handle button CTAs (look for _text or _link pattern)
+      if (key.includes('cta_') && key.includes('_text') && typeof value === 'string') {
+        const baseCTAKey = key.replace('_text', '');
+        const linkKey = `${baseCTAKey}_link`;
+        const parentPath = path || '';
+        
+        // Get the link value from the same level
+        let linkValue = '';
+        if (parentPath) {
+          const parentObj = parentPath.split('.').reduce((obj: any, k: string) => obj?.[k], data);
+          linkValue = parentObj?.[linkKey] || '';
+        } else {
+          linkValue = data[linkKey] || '';
+        }
+        
+        const textPath = currentPath;
+        const linkPath = parentPath ? `${parentPath}.${linkKey}` : linkKey;
+        
         return (
           <div key={currentPath} className="mb-4">
             <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">
-              {key.replace(/_/g, ' ')}
+              {baseCTAKey.replace(/_/g, ' ')}
             </div>
-            {renderEditableButton(sectionId, currentPath, `${currentPath.split('.').slice(0, -1).join('.')}.${linkKey}`, value, linkValue || '')}
+            {renderEditableButton(sectionId, textPath, linkPath, value, linkValue)}
+          </div>
+        );
+      }
+
+      // Handle button_text and button_link pattern
+      if (key === 'button_text' && typeof value === 'string') {
+        const parentPath = path || '';
+        let linkValue = '';
+        if (parentPath) {
+          const parentObj = parentPath.split('.').reduce((obj: any, k: string) => obj?.[k], data);
+          linkValue = parentObj?.['button_link'] || '';
+        } else {
+          linkValue = data['button_link'] || '';
+        }
+        
+        const linkPath = parentPath ? `${parentPath}.button_link` : 'button_link';
+        
+        return (
+          <div key={currentPath} className="mb-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">Button</div>
+            {renderEditableButton(sectionId, currentPath, linkPath, value, linkValue)}
           </div>
         );
       }
 
       // Skip _link fields as they're handled with their button
-      if (key.includes('_link')) return null;
+      if (key.includes('_link') || key === 'button_link') return null;
 
       // Handle regular text (short)
       if (typeof value === 'string' && value.length < 100) {
