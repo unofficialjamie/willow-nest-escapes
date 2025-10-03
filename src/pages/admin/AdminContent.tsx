@@ -47,6 +47,7 @@ const AdminContent = () => {
   }, [selectedPage]);
 
   const fetchSections = async () => {
+    console.log("=== FETCHING SECTIONS FOR PAGE:", selectedPage, "===");
     const { data, error } = await supabase
       .from("page_sections")
       .select("*")
@@ -54,12 +55,18 @@ const AdminContent = () => {
       .order("display_order", { ascending: true });
 
     if (error) {
+      console.error("ERROR FETCHING SECTIONS:", error);
       toast({
         title: "Error",
         description: "Failed to fetch sections",
         variant: "destructive",
       });
     } else {
+      console.log("=== FETCHED SECTIONS DATA ===", data);
+      console.log("=== NUMBER OF SECTIONS:", data?.length);
+      data?.forEach((section, idx) => {
+        console.log(`Section ${idx + 1}:`, section.section_key, "| Keys in data:", Object.keys(section.data || {}));
+      });
       setSections(data || []);
     }
   };
@@ -359,7 +366,9 @@ const AdminContent = () => {
             </CardContent>
           </Card>
         ) : (
-          sections.map((section) => (
+          sections.map((section) => {
+            console.log("=== RENDERING SECTION:", section.section_key, "| Data keys:", Object.keys(section.data || {}));
+            return (
             <Card key={section.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -496,7 +505,8 @@ const AdminContent = () => {
                 </div>
               </CardContent>
             </Card>
-          ))
+            );
+          })
         )}
       </div>
     </div>
