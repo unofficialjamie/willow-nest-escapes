@@ -51,7 +51,7 @@ const PAGES: PageInfo[] = [
   { name: "location-ogbomosho", title: "Ogbomosho Location", route: "/locations/ogbomosho" },
 ];
 
-const CONTENT_TYPES = ["text", "heading", "image", "button_text", "button_link", "description"];
+const CONTENT_TYPES = ["text", "heading", "image", "hero", "section_header", "button_text", "button_link", "description", "json"];
 
 const AdminPages = () => {
   const { loading: authLoading } = useAdminAuth();
@@ -450,11 +450,11 @@ const AdminPages = () => {
                                 />
                               </div>
                             ) : (
-                              <p className="text-sm text-muted-foreground line-clamp-3">
-                                {typeof section.data === "string" 
-                                  ? section.data 
-                                  : section.data?.text || section.data?.value || "No content"}
-                              </p>
+                              <div className="text-xs text-muted-foreground line-clamp-4 font-mono bg-muted p-2 rounded">
+                                {typeof section.data === "object" 
+                                  ? JSON.stringify(section.data, null, 2).substring(0, 200) + "..."
+                                  : String(section.data || "No content").substring(0, 200)}
+                              </div>
                             )}
                           </div>
                           <div className="flex gap-2">
@@ -554,8 +554,52 @@ const AdminPages = () => {
 
                   <div>
                     <Label>Content Value</Label>
-                    {editingSection.content_type === "text" ||
-                    editingSection.content_type === "description" ? (
+                    {editingSection.content_type === "image" ? (
+                      <div className="space-y-2">
+                        <Input
+                          value={
+                            typeof editingSection.data === "string"
+                              ? editingSection.data
+                              : editingSection.data?.url || ""
+                          }
+                          onChange={(e) =>
+                            setEditingSection({
+                              ...editingSection,
+                              data: { url: e.target.value },
+                            })
+                          }
+                          placeholder="Image URL"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Use Upload button in sections list to upload files
+                        </p>
+                      </div>
+                    ) : editingSection.content_type === "hero" || 
+                       editingSection.content_type === "section_header" ||
+                       editingSection.content_type === "json" ? (
+                      <Textarea
+                        value={
+                          typeof editingSection.data === "object"
+                            ? JSON.stringify(editingSection.data, null, 2)
+                            : String(editingSection.data || "{}")
+                        }
+                        onChange={(e) => {
+                          try {
+                            const parsed = JSON.parse(e.target.value);
+                            setEditingSection({
+                              ...editingSection,
+                              data: parsed,
+                            });
+                          } catch {
+                            // Keep current value if JSON is invalid
+                          }
+                        }}
+                        rows={15}
+                        className="font-mono text-xs"
+                        placeholder='{"key": "value"}'
+                      />
+                    ) : editingSection.content_type === "text" ||
+                       editingSection.content_type === "description" ? (
                       <Textarea
                         value={
                           typeof editingSection.data === "string"
@@ -576,21 +620,15 @@ const AdminPages = () => {
                         value={
                           typeof editingSection.data === "string"
                             ? editingSection.data
-                            : editingSection.data?.url || editingSection.data?.value || ""
+                            : editingSection.data?.value || ""
                         }
                         onChange={(e) =>
                           setEditingSection({
                             ...editingSection,
-                            data: editingSection.content_type === "image" 
-                              ? { url: e.target.value }
-                              : { value: e.target.value },
+                            data: { value: e.target.value },
                           })
                         }
-                        placeholder={
-                          editingSection.content_type === "image"
-                            ? "Image URL or upload below"
-                            : "Enter content"
-                        }
+                        placeholder="Enter content"
                       />
                     )}
                   </div>
