@@ -1,9 +1,11 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BookingForm from "@/components/BookingForm";
 import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Phone, Mail } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { usePageSections } from "@/hooks/usePageSections";
+import { supabase } from "@/integrations/supabase/client";
 import deluxeKing from "@/assets/rooms/deluxe-king.jpg";
 import executiveSuite from "@/assets/rooms/executive-suite.jpg";
 import superiorTwin from "@/assets/rooms/superior-twin.jpg";
@@ -17,21 +19,48 @@ const iconMap: Record<string, any> = {
   Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Phone, Mail, MapPin
 };
 
+const roomImageMap: Record<string, string> = {
+  "deluxe-king": deluxeKing,
+  "executive-suite": executiveSuite,
+  "superior-twin": superiorTwin,
+  "premium-queen": premiumQueen,
+  "presidential-suite": presidentialSuite,
+  "standard-double": standardDouble,
+  "family-room": familyRoom,
+  "business-king": businessKing
+};
+
 const LocationAbujaPage = () => {
   const { sections, loading, getSectionData } = usePageSections("location-abuja");
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [roomsLoading, setRoomsLoading] = useState(true);
 
-  const rooms = [
-    { image: deluxeKing, name: "Deluxe King Room", size: "35 sqm", occupancy: "2 Guests", price: "₦45,000" },
-    { image: executiveSuite, name: "Executive Suite", size: "55 sqm", occupancy: "3 Guests", price: "₦85,000" },
-    { image: superiorTwin, name: "Superior Twin Room", size: "32 sqm", occupancy: "2 Guests", price: "₦40,000" },
-    { image: premiumQueen, name: "Premium Queen Room", size: "38 sqm", occupancy: "2 Guests", price: "₦50,000" },
-    { image: presidentialSuite, name: "Presidential Suite", size: "85 sqm", occupancy: "4 Guests", price: "₦150,000" },
-    { image: standardDouble, name: "Standard Double Room", size: "28 sqm", occupancy: "2 Guests", price: "₦35,000" },
-    { image: familyRoom, name: "Family Room", size: "48 sqm", occupancy: "4 Guests", price: "₦65,000" },
-    { image: businessKing, name: "Business King Room", size: "40 sqm", occupancy: "2 Guests", price: "₦55,000" }
-  ];
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
-  if (loading) {
+  const fetchRooms = async () => {
+    const { data, error } = await supabase
+      .from("rooms")
+      .select("*")
+      .eq("location", "abuja")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true });
+
+    if (!error && data) {
+      const roomsWithImages = data.map(room => {
+        const imageKey = room.image_url?.split('/').pop()?.replace('.jpg', '') || '';
+        return {
+          ...room,
+          image: roomImageMap[imageKey] || room.image_url || deluxeKing
+        };
+      });
+      setRooms(roomsWithImages);
+    }
+    setRoomsLoading(false);
+  };
+
+  if (loading || roomsLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
@@ -122,49 +151,60 @@ const LocationAbujaPage = () => {
               </p>
             </div>
 
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {rooms.map((room, index) => (
-                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/5">
-                    <Card className="overflow-hidden h-full">
-                      <CardContent className="p-0 flex flex-col h-full">
-                        <div className="relative aspect-[4/3] overflow-hidden">
-                          <img 
-                            src={room.image} 
-                            alt={room.name}
-                            className="w-full h-full object-cover transition-transform hover:scale-105"
-                          />
-                        </div>
-                        <div className="p-4 flex-1 flex flex-col">
-                          <h3 className="font-heading text-lg font-semibold mb-2">{room.name}</h3>
-                          <div className="space-y-1 text-sm text-muted-foreground mb-4 flex-1">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4" />
-                              <span>{room.size}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="h-4 w-4" />
-                              <span>{room.occupancy}</span>
-                            </div>
+            {rooms.length > 0 ? (
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {rooms.map((room, index) => (
+                    <CarouselItem key={room.id || index} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/5">
+                      <Card className="overflow-hidden h-full">
+                        <CardContent className="p-0 flex flex-col h-full">
+                          <div className="relative aspect-[4/3] overflow-hidden">
+                            <img 
+                              src={room.image} 
+                              alt={room.name}
+                              className="w-full h-full object-cover transition-transform hover:scale-105"
+                            />
                           </div>
-                          <Button variant="outline" className="w-full">
-                            View Room
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex -left-12" />
-              <CarouselNext className="hidden md:flex -right-12" />
-            </Carousel>
+                          <div className="p-4 flex-1 flex flex-col">
+                            <h3 className="font-heading text-lg font-semibold mb-2">{room.name}</h3>
+                            <div className="space-y-1 text-sm text-muted-foreground mb-4 flex-1">
+                              {room.size && (
+                                <div className="flex items-center gap-2">
+                                  <MapPin className="h-4 w-4" />
+                                  <span>{room.size}</span>
+                                </div>
+                              )}
+                              {room.occupancy && (
+                                <div className="flex items-center gap-2">
+                                  <Users className="h-4 w-4" />
+                                  <span>{room.occupancy}</span>
+                                </div>
+                              )}
+                              {room.description && (
+                                <p className="text-xs line-clamp-2">{room.description}</p>
+                              )}
+                            </div>
+                            <Button variant="outline" className="w-full">
+                              {room.button_link ? 'View Details' : 'View Room'}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex -left-12" />
+                <CarouselNext className="hidden md:flex -right-12" />
+              </Carousel>
+            ) : (
+              <p className="text-center text-muted-foreground">No rooms available at this location.</p>
+            )}
 
             <div className="text-center mt-8">
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3">

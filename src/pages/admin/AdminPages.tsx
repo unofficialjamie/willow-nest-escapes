@@ -43,8 +43,8 @@ const PAGES: PageInfo[] = [
   { name: "facilities", title: "Facilities Page", route: "/facilities" },
   { name: "contact", title: "Contact Page", route: "/contact" },
   { name: "faq", title: "FAQ Page", route: "/faq" },
-  { name: "privacy_policy", title: "Privacy Policy", route: "/privacy-policy" },
-  { name: "hotel_policies", title: "Hotel Policies", route: "/hotel-policies" },
+  { name: "privacy-policy", title: "Privacy Policy", route: "/privacy-policy" },
+  { name: "hotel-policies", title: "Hotel Policies", route: "/hotel-policies" },
 ];
 
 const AdminPages = () => {

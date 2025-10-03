@@ -165,9 +165,9 @@ const Navigation = () => {
               <div className="px-4">
                 <button
                   onClick={() => setIsMobileLocationsOpen(!isMobileLocationsOpen)}
-                  className="flex items-center justify-between w-full font-medium py-2"
+                  className="flex items-center justify-between w-full font-medium py-2 text-left hover:text-primary transition-colors"
                 >
-                  <span>Locations</span>
+                  <span className="flex-1">Locations</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${isMobileLocationsOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {isMobileLocationsOpen && (
