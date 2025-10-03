@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import heroImage from "@/assets/hero-luxury-hotel.jpg";
+import { usePageSections } from "@/hooks/usePageSections";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +19,7 @@ const ContactPage = () => {
     message: ""
   });
   const { toast } = useToast();
+  const { sections, loading, getSectionData } = usePageSections('contact');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,45 +37,26 @@ const ContactPage = () => {
     });
   };
 
-  const locations = [
-    {
-      name: "Head Office",
-      email: "reservations@thewillowshotels.com",
-      phone: "+234 (0) 813 111 1808",
-      address: "Nigeria"
-    },
-    {
-      name: "Ibadan Branch",
-      email: "reservations.ib@thewillowshotels.com",
-      phone: "+234 (0) 813 111 1808",
-      address: "Ibadan, Oyo State"
-    },
-    {
-      name: "Ogbomosho Branch", 
-      email: "reservations.ogb@thewillowshotels.com",
-      phone: "+234 (0) 813 111 1808",
-      address: "Ogbomosho, Oyo State"
-    },
-    {
-      name: "Abuja Branch",
-      email: "reservations.abj@thewillowshotels.com",
-      phone: "+234 (0) 813 111 1808",
-      address: "Garki, Abuja"
-    }
-  ];
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  const heroData = getSectionData('hero', {});
+  const locationsData = getSectionData('locations', {});
+  const socialData = getSectionData('social', {});
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section 
         className="py-24 bg-cover bg-center bg-no-repeat relative"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        style={{ backgroundImage: `url(${heroData.image || ''})` }}
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-6 text-white">Contact Us</h1>
+          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-6 text-white">{heroData.title}</h1>
           <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            Get in touch with us for reservations, inquiries, or any assistance you need
+            {heroData.description}
           </p>
         </div>
       </section>
@@ -169,7 +151,7 @@ const ContactPage = () => {
           {/* Contact Information */}
           <div className="space-y-6">
             {/* Contact Cards */}
-            {locations.map((location, index) => (
+            {locationsData.items?.map((location: any, index: number) => (
               <Card key={index} className="card-luxury">
                 <CardContent className="p-6">
                   <h3 className="font-heading text-xl font-semibold mb-4 text-primary">
@@ -197,7 +179,7 @@ const ContactPage = () => {
             <Card className="card-luxury">
               <CardContent className="p-6">
                 <h3 className="font-heading text-xl font-semibold mb-4 text-primary">
-                  Follow Us
+                  {socialData.title}
                 </h3>
                 <div className="flex space-x-4">
                   <Instagram className="h-6 w-6 text-primary hover:text-primary-glow cursor-pointer transition-colors" />
@@ -205,7 +187,7 @@ const ContactPage = () => {
                   <Linkedin className="h-6 w-6 text-primary hover:text-primary-glow cursor-pointer transition-colors" />
                 </div>
                 <p className="text-sm text-muted-foreground mt-4">
-                  Stay connected with us for updates, special offers, and behind-the-scenes content.
+                  {socialData.description}
                 </p>
               </CardContent>
             </Card>
