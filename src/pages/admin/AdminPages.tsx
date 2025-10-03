@@ -88,45 +88,43 @@ const AdminPages = () => {
 
   const handleImageUpload = async (file: File, sectionId: string, imagePath: string) => {
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${selectedPage}/${fileName}`;
+      // Convert image to base64 as temporary workaround for storage issue
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result as string;
+        
+        // Update the section data with base64 image
+        const section = pageSections.find(s => s.id === sectionId);
+        if (!section) return;
 
-      const { error: uploadError } = await supabase.storage
-        .from("website-images")
-        .upload(filePath, file);
+        const newData = { ...section.data };
+        const pathParts = imagePath.split('.');
+        let current = newData;
+        for (let i = 0; i < pathParts.length - 1; i++) {
+          current = current[pathParts[i]];
+        }
+        current[pathParts[pathParts.length - 1]] = base64String;
 
-      if (uploadError) throw uploadError;
+        const { error: updateError } = await supabase
+          .from("page_sections")
+          .update({ data: newData })
+          .eq("id", sectionId);
 
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("website-images").getPublicUrl(filePath);
+        if (updateError) throw updateError;
 
-      // Update the section data with new image URL
-      const section = pageSections.find(s => s.id === sectionId);
-      if (!section) return;
-
-      const newData = { ...section.data };
-      const pathParts = imagePath.split('.');
-      let current = newData;
-      for (let i = 0; i < pathParts.length - 1; i++) {
-        current = current[pathParts[i]];
-      }
-      current[pathParts[pathParts.length - 1]] = publicUrl;
-
-      const { error: updateError } = await supabase
-        .from("page_sections")
-        .update({ data: newData })
-        .eq("id", sectionId);
-
-      if (updateError) throw updateError;
-
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully",
-      });
+        toast({
+          title: "Success",
+          description: "Image uploaded successfully",
+        });
+        
+        if (selectedPage) fetchPageSections(selectedPage);
+      };
       
-      if (selectedPage) fetchPageSections(selectedPage);
+      reader.onerror = () => {
+        throw new Error("Failed to read image file");
+      };
+      
+      reader.readAsDataURL(file);
     } catch (error: any) {
       toast({
         title: "Error",
