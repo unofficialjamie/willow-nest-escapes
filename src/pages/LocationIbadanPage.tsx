@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import BookingForm from "@/components/BookingForm";
-import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Phone, Mail } from "lucide-react";
+import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Phone, Mail, BedDouble } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import roomImage from "@/assets/room-elegant.jpg";
 import poolImage from "@/assets/pool-area.jpg";
 import restaurantImage from "@/assets/restaurant.jpg";
 import heroImage from "@/assets/ibadan-hero.jpg";
+import deluxeKing from "@/assets/rooms/deluxe-king.jpg";
+import executiveSuite from "@/assets/rooms/executive-suite.jpg";
+import superiorTwin from "@/assets/rooms/superior-twin.jpg";
+import premiumQueen from "@/assets/rooms/premium-queen.jpg";
+import presidentialSuite from "@/assets/rooms/presidential-suite.jpg";
+import standardDouble from "@/assets/rooms/standard-double.jpg";
+import familyRoom from "@/assets/rooms/family-room.jpg";
+import businessKing from "@/assets/rooms/business-king.jpg";
 
 const LocationIbadanPage = () => {
   const amenities = [
@@ -24,6 +33,17 @@ const LocationIbadanPage = () => {
     { image: poolImage, alt: "Swimming pool area" },
     { image: restaurantImage, alt: "Restaurant dining" },
     { image: heroImage, alt: "Hotel exterior" }
+  ];
+
+  const rooms = [
+    { image: deluxeKing, name: "Deluxe King Room", size: "35 sqm", occupancy: "2 Guests", price: "₦45,000" },
+    { image: executiveSuite, name: "Executive Suite", size: "55 sqm", occupancy: "3 Guests", price: "₦85,000" },
+    { image: superiorTwin, name: "Superior Twin Room", size: "32 sqm", occupancy: "2 Guests", price: "₦40,000" },
+    { image: premiumQueen, name: "Premium Queen Room", size: "38 sqm", occupancy: "2 Guests", price: "₦50,000" },
+    { image: presidentialSuite, name: "Presidential Suite", size: "85 sqm", occupancy: "4 Guests", price: "₦150,000" },
+    { image: standardDouble, name: "Standard Double Room", size: "28 sqm", occupancy: "2 Guests", price: "₦35,000" },
+    { image: familyRoom, name: "Family Room", size: "48 sqm", occupancy: "4 Guests", price: "₦65,000" },
+    { image: businessKing, name: "Business King Room", size: "40 sqm", occupancy: "2 Guests", price: "₦55,000" }
   ];
 
   return (
@@ -131,6 +151,69 @@ const LocationIbadanPage = () => {
                   />
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Our Rooms Section */}
+        <section className="py-16 bg-luxury-cream">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">Our Rooms</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Choose from our selection of thoughtfully designed rooms and suites, each offering comfort, 
+                style, and modern amenities for an unforgettable stay.
+              </p>
+            </div>
+
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {rooms.map((room, index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/5">
+                    <Card className="overflow-hidden h-full">
+                      <CardContent className="p-0 flex flex-col h-full">
+                        <div className="relative aspect-[4/3] overflow-hidden">
+                          <img 
+                            src={room.image} 
+                            alt={room.name}
+                            className="w-full h-full object-cover transition-transform hover:scale-105"
+                          />
+                        </div>
+                        <div className="p-4 flex-1 flex flex-col">
+                          <h3 className="font-heading text-lg font-semibold mb-2">{room.name}</h3>
+                          <div className="space-y-1 text-sm text-muted-foreground mb-4 flex-1">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4" />
+                              <span>{room.size}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Users className="h-4 w-4" />
+                              <span>{room.occupancy}</span>
+                            </div>
+                          </div>
+                          <Button variant="outline" className="w-full">
+                            View Room
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex -left-12" />
+              <CarouselNext className="hidden md:flex -right-12" />
+            </Carousel>
+
+            <div className="text-center mt-8">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3">
+                View All Rooms
+              </Button>
             </div>
           </div>
         </section>
