@@ -36,9 +36,15 @@ interface PageInfo {
 const PAGES: PageInfo[] = [
   { name: "home", title: "Home Page", route: "/" },
   { name: "about", title: "About Page", route: "/about" },
-  { name: "contact", title: "Contact Page", route: "/contact" },
+  { name: "locations", title: "Locations Page", route: "/locations" },
+  { name: "locations_ibadan", title: "Ibadan Location", route: "/locations/ibadan" },
+  { name: "locations_ogbomosho", title: "Ogbomosho Location", route: "/locations/ogbomosho" },
+  { name: "locations_abuja", title: "Abuja Location", route: "/locations/abuja" },
   { name: "facilities", title: "Facilities Page", route: "/facilities" },
+  { name: "contact", title: "Contact Page", route: "/contact" },
   { name: "faq", title: "FAQ Page", route: "/faq" },
+  { name: "privacy_policy", title: "Privacy Policy", route: "/privacy-policy" },
+  { name: "hotel_policies", title: "Hotel Policies", route: "/hotel-policies" },
 ];
 
 const AdminPages = () => {

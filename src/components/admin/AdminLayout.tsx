@@ -30,7 +30,6 @@ import { Loader2 } from "lucide-react";
 const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard, end: true },
   { title: "Pages", url: "/admin/pages", icon: FileText },
-  { title: "Content", url: "/admin/content", icon: Image },
   { title: "Rooms", url: "/admin/rooms", icon: Hotel },
   { title: "Settings", url: "/admin/settings", icon: Settings },
   { title: "Seed Data", url: "/admin/seed", icon: Database },
