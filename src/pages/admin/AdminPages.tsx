@@ -202,10 +202,10 @@ const AdminPages = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Pages Management</h1>
-        <p className="text-muted-foreground">Manage all website content like a CMS</p>
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Pages Management</h1>
+        <p className="text-muted-foreground text-lg">Edit all website content like a professional CMS - control text, images, buttons, and more</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

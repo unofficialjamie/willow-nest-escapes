@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Save } from "lucide-react";
 
 const AdminSettings = () => {
   const { user, loading: authLoading } = useAdminAuth();
@@ -123,20 +122,15 @@ const AdminSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="bg-background border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link to="/admin">
-            <Button variant="ghost" size="sm" className="mb-2">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-          </Link>
-          <h1 className="text-3xl font-bold">Settings</h1>
-        </div>
-      </header>
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Settings</h1>
+        <p className="text-muted-foreground text-lg">
+          Manage site settings, logos, and account preferences
+        </p>
+      </div>
 
-      <main className="container mx-auto px-4 py-8">
+      <main>
         <Tabs defaultValue="site" className="max-w-4xl">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="site">Site Settings</TabsTrigger>

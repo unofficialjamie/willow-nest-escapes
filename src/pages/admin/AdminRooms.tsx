@@ -26,8 +26,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 
 interface Room {
   id: string;
@@ -182,20 +181,15 @@ const AdminRooms = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="bg-background border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link to="/admin">
-            <Button variant="ghost" size="sm" className="mb-2">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-          </Link>
-          <h1 className="text-3xl font-bold">Room Management</h1>
-        </div>
-      </header>
+    <div className="p-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Room Management</h1>
+        <p className="text-muted-foreground text-lg">
+          Add, edit, and manage rooms across all hotel locations
+        </p>
+      </div>
 
-      <main className="container mx-auto px-4 py-8">
+      <main>
         <div className="flex justify-between items-center mb-6">
           <Select value={selectedLocation} onValueChange={setSelectedLocation}>
             <SelectTrigger className="w-[200px]">

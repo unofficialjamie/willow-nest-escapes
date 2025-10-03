@@ -2,10 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import AdminLayout from "./components/admin/AdminLayout";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import LocationsPage from "./pages/LocationsPage";
@@ -27,6 +28,50 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function AppContent() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin') && location.pathname !== '/admin/login';
+  const isLoginRoute = location.pathname === '/admin/login';
+
+  if (isAdminRoute) {
+    return (
+      <AdminLayout>
+        <Routes>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/pages" element={<AdminPages />} />
+          <Route path="/admin/content" element={<AdminContent />} />
+          <Route path="/admin/rooms" element={<AdminRooms />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
+        </Routes>
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      {!isLoginRoute && <Navigation />}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/locations" element={<LocationsPage />} />
+          <Route path="/locations/ibadan" element={<LocationIbadanPage />} />
+          <Route path="/locations/ogbomosho" element={<LocationOgbomoshoPage />} />
+          <Route path="/locations/abuja" element={<LocationAbujaPage />} />
+          <Route path="/facilities" element={<FacilitiesPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/hotel-policies" element={<HotelPoliciesPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      {!isLoginRoute && <Footer />}
+    </div>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -34,33 +79,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
-        <div className="min-h-screen flex flex-col">
-          <Navigation />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/locations" element={<LocationsPage />} />
-              <Route path="/locations/ibadan" element={<LocationIbadanPage />} />
-              <Route path="/locations/ogbomosho" element={<LocationOgbomoshoPage />} />
-              <Route path="/locations/abuja" element={<LocationAbujaPage />} />
-              <Route path="/facilities" element={<FacilitiesPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/faq" element={<FAQPage />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-              <Route path="/hotel-policies" element={<HotelPoliciesPage />} />
-              <Route path="/admin/login" element={<AdminLoginPage />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/pages" element={<AdminPages />} />
-              <Route path="/admin/content" element={<AdminContent />} />
-              <Route path="/admin/rooms" element={<AdminRooms />} />
-              <Route path="/admin/settings" element={<AdminSettings />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <AppContent />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
