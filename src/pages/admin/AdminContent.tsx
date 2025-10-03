@@ -388,39 +388,42 @@ const AdminContent = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                {/* Content Preview - Updated */}
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {/* Show image if exists */}
                   {section.data?.image && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">Image:</p>
+                    <div className="border rounded-lg p-4 bg-card">
+                      <p className="text-sm font-semibold mb-3 text-foreground">Image:</p>
                       <img
                         src={section.data.image}
                         alt={section.section_title}
-                        className="w-full max-w-md h-48 object-cover rounded"
+                        className="w-full max-w-md h-48 object-cover rounded border"
                       />
                     </div>
                   )}
                   
-                  {/* Show main fields */}
+                  {/* Display all content fields */}
                   {Object.entries(section.data || {}).map(([key, value]) => {
                     // Skip image as it's already shown
                     if (key === 'image') return null;
                     
-                    // Handle arrays (like items, values, etc.)
+                    // Handle arrays (like testimonial items, values array)
                     if (Array.isArray(value)) {
                       return (
-                        <div key={key} className="border-l-2 border-primary pl-4">
-                          <p className="text-sm font-medium mb-2 capitalize">{key.replace(/_/g, ' ')}:</p>
-                          <div className="space-y-3">
+                        <div key={key} className="border rounded-lg p-4 bg-card">
+                          <p className="text-base font-semibold mb-3 text-foreground capitalize">
+                            {key.replace(/_/g, ' ')}
+                          </p>
+                          <div className="space-y-4">
                             {value.map((item: any, idx: number) => (
-                              <div key={idx} className="bg-muted/50 p-3 rounded text-sm">
+                              <div key={idx} className="bg-muted/70 p-4 rounded-lg border">
                                 {typeof item === 'object' ? (
-                                  <div className="space-y-1">
+                                  <div className="space-y-2">
                                     {Object.entries(item).map(([itemKey, itemValue]) => (
-                                      <div key={itemKey}>
-                                        <span className="font-medium capitalize">{itemKey.replace(/_/g, ' ')}: </span>
-                                        <span className="text-muted-foreground">
+                                      <div key={itemKey} className="flex flex-col gap-1">
+                                        <span className="text-sm font-semibold capitalize text-foreground">
+                                          {itemKey.replace(/_/g, ' ')}:
+                                        </span>
+                                        <span className="text-sm text-muted-foreground pl-2">
                                           {typeof itemValue === 'string' && itemValue.startsWith('data:image') 
                                             ? '[Image Data]' 
                                             : String(itemValue)}
@@ -429,7 +432,7 @@ const AdminContent = () => {
                                     ))}
                                   </div>
                                 ) : (
-                                  <span>{String(item)}</span>
+                                  <span className="text-sm">{String(item)}</span>
                                 )}
                               </div>
                             ))}
@@ -438,16 +441,22 @@ const AdminContent = () => {
                       );
                     }
                     
-                    // Handle objects
+                    // Handle nested objects
                     if (typeof value === 'object' && value !== null) {
                       return (
-                        <div key={key} className="border-l-2 border-primary pl-4">
-                          <p className="text-sm font-medium mb-2 capitalize">{key.replace(/_/g, ' ')}:</p>
-                          <div className="bg-muted/50 p-3 rounded text-sm space-y-1">
+                        <div key={key} className="border rounded-lg p-4 bg-card">
+                          <p className="text-base font-semibold mb-3 text-foreground capitalize">
+                            {key.replace(/_/g, ' ')}
+                          </p>
+                          <div className="bg-muted/70 p-4 rounded-lg border space-y-2">
                             {Object.entries(value).map(([subKey, subValue]) => (
-                              <div key={subKey}>
-                                <span className="font-medium capitalize">{subKey.replace(/_/g, ' ')}: </span>
-                                <span className="text-muted-foreground">{String(subValue)}</span>
+                              <div key={subKey} className="flex flex-col gap-1">
+                                <span className="text-sm font-semibold capitalize text-foreground">
+                                  {subKey.replace(/_/g, ' ')}:
+                                </span>
+                                <span className="text-sm text-muted-foreground pl-2">
+                                  {String(subValue)}
+                                </span>
                               </div>
                             ))}
                           </div>
@@ -455,16 +464,20 @@ const AdminContent = () => {
                       );
                     }
                     
-                    // Handle strings (skip very long base64 strings)
+                    // Skip base64 image strings
                     if (typeof value === 'string' && value.startsWith('data:image')) {
                       return null;
                     }
                     
-                    // Handle primitive values
+                    // Display primitive values (strings, numbers, etc)
                     return (
-                      <div key={key}>
-                        <span className="text-sm font-medium capitalize">{key.replace(/_/g, ' ')}: </span>
-                        <span className="text-sm text-muted-foreground">{String(value)}</span>
+                      <div key={key} className="border rounded-lg p-4 bg-card">
+                        <span className="text-sm font-semibold capitalize text-foreground block mb-2">
+                          {key.replace(/_/g, ' ')}:
+                        </span>
+                        <span className="text-sm text-muted-foreground block pl-2">
+                          {String(value)}
+                        </span>
                       </div>
                     );
                   })}
