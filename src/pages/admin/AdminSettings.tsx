@@ -1,0 +1,274 @@
+import { useState, useEffect } from "react";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Save } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const AdminSettings = () => {
+  const { user, loading: authLoading } = useAdminAuth();
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const [siteSettings, setSiteSettings] = useState({
+    header_logo: "",
+    footer_logo: "",
+    favicon: "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [emailData, setEmailData] = useState({
+    newEmail: "",
+  });
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("*");
+
+    if (!error && data) {
+      const settings = data.reduce((acc, setting) => {
+        acc[setting.setting_key] = setting.setting_value;
+        return acc;
+      }, {} as any);
+      setSiteSettings(settings);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    setLoading(true);
+    
+    for (const [key, value] of Object.entries(siteSettings)) {
+      await supabase
+        .from("site_settings")
+        .upsert({ setting_key: key, setting_value: value, setting_type: 'image' });
+    }
+
+    toast({ title: "Success", description: "Settings saved successfully" });
+    setLoading(false);
+  };
+
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: passwordData.newPassword,
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({ title: "Success", description: "Password updated successfully" });
+    setPasswordData({ newPassword: "", confirmPassword: "" });
+  };
+
+  const handleEmailChange = async () => {
+    const { error } = await supabase.auth.updateUser({
+      email: emailData.newEmail,
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "Email update initiated. Please check your inbox for confirmation.",
+    });
+    setEmailData({ newEmail: "" });
+  };
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-muted/30">
+      <header className="bg-background border-b">
+        <div className="container mx-auto px-4 py-4">
+          <Link to="/admin">
+            <Button variant="ghost" size="sm" className="mb-2">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold">Settings</h1>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <Tabs defaultValue="site" className="max-w-4xl">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="site">Site Settings</TabsTrigger>
+            <TabsTrigger value="account">Account</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="site">
+            <Card>
+              <CardHeader>
+                <CardTitle>Site Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label>Header Logo URL</Label>
+                  <Input
+                    value={siteSettings.header_logo}
+                    onChange={(e) =>
+                      setSiteSettings({ ...siteSettings, header_logo: e.target.value })
+                    }
+                    placeholder="/logo-full.jpg"
+                  />
+                </div>
+                <div>
+                  <Label>Footer Logo URL</Label>
+                  <Input
+                    value={siteSettings.footer_logo}
+                    onChange={(e) =>
+                      setSiteSettings({ ...siteSettings, footer_logo: e.target.value })
+                    }
+                    placeholder="/logo-full.jpg"
+                  />
+                </div>
+                <div>
+                  <Label>Favicon URL</Label>
+                  <Input
+                    value={siteSettings.favicon}
+                    onChange={(e) =>
+                      setSiteSettings({ ...siteSettings, favicon: e.target.value })
+                    }
+                    placeholder="/favicon.ico"
+                  />
+                </div>
+                <Button onClick={handleSaveSettings} disabled={loading}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Settings
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="account">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Change Password</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label>New Password</Label>
+                    <Input
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) =>
+                        setPasswordData({ ...passwordData, newPassword: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label>Confirm Password</Label>
+                    <Input
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <Button onClick={handlePasswordChange}>Update Password</Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Change Email</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label>Current Email</Label>
+                    <Input value={user?.email || ""} disabled />
+                  </div>
+                  <div>
+                    <Label>New Email</Label>
+                    <Input
+                      type="email"
+                      value={emailData.newEmail}
+                      onChange={(e) =>
+                        setEmailData({ ...emailData, newEmail: e.target.value })
+                      }
+                    />
+                  </div>
+                  <Button onClick={handleEmailChange}>Update Email</Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  To add new admin users, first create their account through the authentication system,
+                  then add an entry to the user_roles table with role='admin'.
+                </p>
+                <Button asChild>
+                  <a href="https://docs.lovable.dev" target="_blank" rel="noopener noreferrer">
+                    View Documentation
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </div>
+  );
+};
+
+export default AdminSettings;
