@@ -434,201 +434,148 @@ const AdminPages = () => {
   const renderSection = (section: PageSection) => {
     const { data } = section;
 
-    // Hero Section
-    if (section.content_type === 'hero') {
-      return (
-        <Card key={section.id} className="mb-6">
-          <CardContent className="p-0">
-            <div className="space-y-4">
-              {/* Hero Image */}
-              {data.image && renderEditableImage(section.id, 'image', data.image, true)}
-              
-              <div className="p-6 space-y-4">
-                {/* Title */}
-                <div>
-                  <div className="text-xs font-semibold text-muted-foreground mb-2">Hero Title</div>
-                  <div className="text-3xl font-bold">
-                    {renderEditableText(section.id, 'title', data.title)}
-                  </div>
-                </div>
+    const renderDataField = (sectionId: string, key: string, value: any, path: string = ''): JSX.Element | null => {
+      const currentPath = path ? `${path}.${key}` : key;
 
-                {/* Subtitle */}
-                {data.subtitle && (
-                  <div>
-                    <div className="text-xs font-semibold text-muted-foreground mb-2">Subtitle</div>
-                    <div className="text-xl">
-                      {renderEditableText(section.id, 'subtitle', data.subtitle)}
-                    </div>
-                  </div>
-                )}
+      // Skip rendering if value is null or undefined
+      if (value === null || value === undefined) return null;
 
-                {/* Description */}
-                {data.description && (
-                  <div>
-                    <div className="text-xs font-semibold text-muted-foreground mb-2">Description</div>
-                    {renderEditableText(section.id, 'description', data.description, true)}
-                  </div>
-                )}
+      // Handle images
+      if (key === 'image' && typeof value === 'string' && (value.startsWith('http') || value.startsWith('/') || value.startsWith('data:'))) {
+        return (
+          <div key={currentPath} className="mb-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">{key.replace(/_/g, ' ')}</div>
+            {renderEditableImage(sectionId, currentPath, value, key.includes('hero'))}
+          </div>
+        );
+      }
 
-                {/* Buttons */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                  {data.cta_primary && (
-                    <div>
-                      <div className="text-xs font-semibold text-muted-foreground mb-2">Primary Button</div>
-                      {renderEditableButton(section.id, 'cta_primary', 'cta_primary_link', data.cta_primary, data.cta_primary_link)}
-                    </div>
-                  )}
-                  {data.cta_secondary && (
-                    <div>
-                      <div className="text-xs font-semibold text-muted-foreground mb-2">Secondary Button</div>
-                      {renderEditableButton(section.id, 'cta_secondary', 'cta_secondary_link', data.cta_secondary, data.cta_secondary_link)}
-                    </div>
-                  )}
-                </div>
-              </div>
+      // Handle icons
+      if (key === 'icon' && typeof value === 'string') {
+        return (
+          <div key={currentPath} className="mb-4">
+            {renderEditableIcon(sectionId, currentPath, value)}
+          </div>
+        );
+      }
+
+      // Handle arrays of objects (items, features, etc)
+      if (Array.isArray(value)) {
+        // Check if it's an array of strings (simple list)
+        if (value.length > 0 && typeof value[0] === 'string') {
+          return (
+            <div key={currentPath} className="mb-4">
+              <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">{key.replace(/_/g, ' ')}</div>
+              {renderEditableArray(sectionId, currentPath, value)}
             </div>
-          </CardContent>
-        </Card>
-      );
-    }
+          );
+        }
 
-    // Section Header (complex JSON sections)
-    if (section.content_type === 'section_header') {
-      return (
-        <Card key={section.id} className="mb-6">
-          <CardContent className="p-6">
-            <div className="mb-4">
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">
-                {section.section_title}
-              </h3>
+        // Array of objects
+        return (
+          <div key={currentPath} className="mb-6">
+            <div className="text-sm font-semibold text-muted-foreground mb-3 capitalize">{key.replace(/_/g, ' ')}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {value.map((item: any, index: number) => (
+                <Card key={index} className="p-4 space-y-3">
+                  <div className="text-xs font-semibold text-muted-foreground mb-2">Item {index + 1}</div>
+                  {Object.entries(item).map(([itemKey, itemValue]) => 
+                    renderDataField(sectionId, itemKey, itemValue, `${currentPath}.${index}`)
+                  )}
+                </Card>
+              ))}
             </div>
-            
-            {data.title && (
-              <div className="text-2xl font-bold mb-4">
-                {renderEditableText(section.id, 'title', data.title)}
-              </div>
-            )}
-            
-            {data.description && (
-              <div className="text-lg mb-4">
-                {renderEditableText(section.id, 'description', data.description, true)}
-              </div>
-            )}
+          </div>
+        );
+      }
 
-            {data.content && (
-              <div className="mb-4">
-                {renderEditableText(section.id, 'content', data.content, true)}
-              </div>
-            )}
+      // Handle nested objects
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        return (
+          <div key={currentPath} className="mb-4 border rounded-lg p-4 bg-card">
+            <div className="text-sm font-semibold text-muted-foreground mb-3 capitalize">{key.replace(/_/g, ' ')}</div>
+            <div className="space-y-3">
+              {Object.entries(value).map(([subKey, subValue]) => 
+                renderDataField(sectionId, subKey, subValue, currentPath)
+              )}
+            </div>
+          </div>
+        );
+      }
 
-            {/* Items array (highlights, facilities, etc) */}
-            {data.items && Array.isArray(data.items) && !data.items[0]?.question && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {data.items.map((item: any, index: number) => (
-                  <Card key={index} className="p-4 space-y-3">
-                    {/* Icon (for highlights) */}
-                    {item.icon && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted-foreground mb-1">Icon</div>
-                        {renderEditableIcon(section.id, `items.${index}.icon`, item.icon)}
-                      </div>
-                    )}
+      // Handle button CTAs (look for _link pattern)
+      if (key.includes('cta_') && !key.includes('_link') && typeof value === 'string') {
+        const linkKey = `${key}_link`;
+        const linkValue = path ? 
+          path.split('.').reduce((obj: any, k: string) => obj?.[k], data)?.[linkKey] :
+          data[linkKey];
+        return (
+          <div key={currentPath} className="mb-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">
+              {key.replace(/_/g, ' ')}
+            </div>
+            {renderEditableButton(sectionId, currentPath, `${currentPath.split('.').slice(0, -1).join('.')}.${linkKey}`, value, linkValue || '')}
+          </div>
+        );
+      }
 
-                    {/* Image (for facilities/locations) */}
-                    {item.image && renderEditableImage(section.id, `items.${index}.image`, item.image)}
-                    
-                    {/* Title */}
-                    {item.title && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted-foreground mb-1">Title</div>
-                        <div className="font-semibold">
-                          {renderEditableText(section.id, `items.${index}.title`, item.title)}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Description */}
-                    {item.description && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted-foreground mb-1">Description</div>
-                        <div className="text-sm text-muted-foreground">
-                          {renderEditableText(section.id, `items.${index}.description`, item.description, true)}
-                        </div>
-                      </div>
-                    )}
+      // Skip _link fields as they're handled with their button
+      if (key.includes('_link')) return null;
 
-                    {/* Features list (for facilities) */}
-                    {item.features && Array.isArray(item.features) && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted-foreground mb-1">Features</div>
-                        {renderEditableArray(section.id, `items.${index}.features`, item.features)}
-                      </div>
-                    )}
+      // Handle regular text (short)
+      if (typeof value === 'string' && value.length < 100) {
+        return (
+          <div key={currentPath} className="mb-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">{key.replace(/_/g, ' ')}</div>
+            {renderEditableText(sectionId, currentPath, value)}
+          </div>
+        );
+      }
 
-                    {/* Link (for locations) */}
-                    {item.link && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted-foreground mb-1">Link</div>
-                        {renderEditableText(section.id, `items.${index}.link`, item.link)}
-                      </div>
-                    )}
+      // Handle long text (descriptions, content)
+      if (typeof value === 'string') {
+        return (
+          <div key={currentPath} className="mb-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">{key.replace(/_/g, ' ')}</div>
+            {renderEditableText(sectionId, currentPath, value, true)}
+        </div>
+        );
+      }
 
-                    {/* Room count (for locations) */}
-                    {item.rooms && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted-foreground mb-1">Rooms Info</div>
-                        {renderEditableText(section.id, `items.${index}.rooms`, item.rooms)}
-                      </div>
-                    )}
+      // Handle numbers and booleans
+      if (typeof value === 'number' || typeof value === 'boolean') {
+        return (
+          <div key={currentPath} className="mb-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">{key.replace(/_/g, ' ')}</div>
+            {renderEditableText(sectionId, currentPath, String(value))}
+          </div>
+        );
+      }
 
-                    {/* Name (for locations) */}
-                    {item.name && (
-                      <div>
-                        <div className="text-xs font-semibold text-muted-foreground mb-1">Location Name</div>
-                        {renderEditableText(section.id, `items.${index}.name`, item.name)}
-                      </div>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            )}
+      return null;
+    };
 
-            {/* CTA Buttons */}
-            {data.cta_text && (
-              <div className="mt-6">
-                <div className="text-xs font-semibold text-muted-foreground mb-2">Call to Action Button</div>
-                {renderEditableButton(section.id, 'cta_text', 'cta_link', data.cta_text, data.cta_link)}
-              </div>
-            )}
-
-            {/* FAQ items */}
-            {data.items && Array.isArray(data.items) && data.items[0]?.question && (
-              <div className="space-y-4 mt-4">
-                {data.items.map((item: any, index: number) => (
-                  <Card key={index} className="p-4">
-                    <div className="font-semibold">
-                      {renderEditableText(section.id, `items.${index}.question`, item.question)}
-                    </div>
-                    <div className="text-sm text-muted-foreground mt-2">
-                      {renderEditableText(section.id, `items.${index}.answer`, item.answer, true)}
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      );
-    }
-
-    // Default fallback
     return (
       <Card key={section.id} className="mb-6">
         <CardContent className="p-6">
-          <div className="text-sm text-muted-foreground mb-2">{section.section_title}</div>
-          <pre className="text-xs bg-muted p-4 rounded overflow-auto">
-            {JSON.stringify(data, null, 2)}
-          </pre>
+          <div className="mb-6 pb-4 border-b">
+            <h3 className="text-lg font-semibold text-foreground mb-1">
+              {section.section_title}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              {section.section_key} • {section.content_type} • Order: {section.display_order}
+            </p>
+          </div>
+          
+          <div className="space-y-4">
+            {Object.entries(data || {}).map(([key, value]) => 
+              renderDataField(section.id, key, value)
+            )}
+            
+            {(!data || Object.keys(data).length === 0) && (
+              <p className="text-muted-foreground text-center py-8">No content data available</p>
+            )}
+          </div>
         </CardContent>
       </Card>
     );
