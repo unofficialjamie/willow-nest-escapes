@@ -48,28 +48,35 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`font-medium transition-colors hover:text-primary ${
-                  isActive(item.path) 
-                    ? "text-primary border-b-2 border-primary pb-1" 
-                    : "text-foreground"
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+            <Link
+              to="/"
+              className={`font-medium transition-colors hover:text-primary ${
+                isActive("/") 
+                  ? "text-primary border-b-2 border-primary pb-1" 
+                  : "text-foreground"
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              to="/about"
+              className={`font-medium transition-colors hover:text-primary ${
+                isActive("/about") 
+                  ? "text-primary border-b-2 border-primary pb-1" 
+                  : "text-foreground"
+              }`}
+            >
+              About
+            </Link>
             
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="font-medium bg-transparent hover:bg-transparent data-[state=open]:bg-transparent">
+                  <NavigationMenuTrigger className="font-medium text-base bg-transparent hover:bg-transparent data-[state=open]:bg-transparent hover:text-primary transition-colors">
                     Locations
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[200px] gap-2 p-4 bg-background">
+                    <ul className="grid w-[200px] gap-2 p-4 bg-background z-50">
                       {locationItems.map((item) => (
                         <li key={item.path}>
                           <NavigationMenuLink asChild>
@@ -89,6 +96,37 @@ const Navigation = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            
+            <Link
+              to="/facilities"
+              className={`font-medium transition-colors hover:text-primary ${
+                isActive("/facilities") 
+                  ? "text-primary border-b-2 border-primary pb-1" 
+                  : "text-foreground"
+              }`}
+            >
+              Facilities
+            </Link>
+            <Link
+              to="/contact"
+              className={`font-medium transition-colors hover:text-primary ${
+                isActive("/contact") 
+                  ? "text-primary border-b-2 border-primary pb-1" 
+                  : "text-foreground"
+              }`}
+            >
+              Contact
+            </Link>
+            <Link
+              to="/faq"
+              className={`font-medium transition-colors hover:text-primary ${
+                isActive("/faq") 
+                  ? "text-primary border-b-2 border-primary pb-1" 
+                  : "text-foreground"
+              }`}
+            >
+              FAQ
+            </Link>
             
             <Button variant="luxury" className="ml-4">
               Book Now
