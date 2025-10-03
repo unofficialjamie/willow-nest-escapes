@@ -149,37 +149,133 @@ const AdminSettings = () => {
               <CardHeader>
                 <CardTitle>Site Settings</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label>Header Logo URL</Label>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label>Header Logo</Label>
                   <Input
-                    value={siteSettings.header_logo}
-                    onChange={(e) =>
-                      setSiteSettings({ ...siteSettings, header_logo: e.target.value })
-                    }
-                    placeholder="/logo-full.jpg"
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      
+                      const fileExt = file.name.split('.').pop();
+                      const fileName = `header-logo.${fileExt}`;
+                      const filePath = `site/${fileName}`;
+
+                      const { error: uploadError } = await supabase.storage
+                        .from('website-images')
+                        .upload(filePath, file, { upsert: true });
+
+                      if (uploadError) {
+                        toast({
+                          title: "Error",
+                          description: "Failed to upload logo",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+
+                      const { data: { publicUrl } } = supabase.storage
+                        .from('website-images')
+                        .getPublicUrl(filePath);
+
+                      setSiteSettings({ ...siteSettings, header_logo: publicUrl });
+                      toast({
+                        title: "Success",
+                        description: "Logo uploaded successfully",
+                      });
+                    }}
                   />
+                  {siteSettings.header_logo && (
+                    <img src={siteSettings.header_logo} alt="Header Logo" className="w-48 h-auto mt-2" />
+                  )}
                 </div>
-                <div>
-                  <Label>Footer Logo URL</Label>
+
+                <div className="space-y-2">
+                  <Label>Footer Logo</Label>
                   <Input
-                    value={siteSettings.footer_logo}
-                    onChange={(e) =>
-                      setSiteSettings({ ...siteSettings, footer_logo: e.target.value })
-                    }
-                    placeholder="/logo-full.jpg"
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      
+                      const fileExt = file.name.split('.').pop();
+                      const fileName = `footer-logo.${fileExt}`;
+                      const filePath = `site/${fileName}`;
+
+                      const { error: uploadError } = await supabase.storage
+                        .from('website-images')
+                        .upload(filePath, file, { upsert: true });
+
+                      if (uploadError) {
+                        toast({
+                          title: "Error",
+                          description: "Failed to upload logo",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+
+                      const { data: { publicUrl } } = supabase.storage
+                        .from('website-images')
+                        .getPublicUrl(filePath);
+
+                      setSiteSettings({ ...siteSettings, footer_logo: publicUrl });
+                      toast({
+                        title: "Success",
+                        description: "Logo uploaded successfully",
+                      });
+                    }}
                   />
+                  {siteSettings.footer_logo && (
+                    <img src={siteSettings.footer_logo} alt="Footer Logo" className="w-48 h-auto mt-2" />
+                  )}
                 </div>
-                <div>
-                  <Label>Favicon URL</Label>
+
+                <div className="space-y-2">
+                  <Label>Favicon</Label>
                   <Input
-                    value={siteSettings.favicon}
-                    onChange={(e) =>
-                      setSiteSettings({ ...siteSettings, favicon: e.target.value })
-                    }
-                    placeholder="/favicon.ico"
+                    type="file"
+                    accept="image/x-icon,image/png,image/svg+xml"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      
+                      const fileExt = file.name.split('.').pop();
+                      const fileName = `favicon.${fileExt}`;
+                      const filePath = `site/${fileName}`;
+
+                      const { error: uploadError } = await supabase.storage
+                        .from('website-images')
+                        .upload(filePath, file, { upsert: true });
+
+                      if (uploadError) {
+                        toast({
+                          title: "Error",
+                          description: "Failed to upload favicon",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+
+                      const { data: { publicUrl } } = supabase.storage
+                        .from('website-images')
+                        .getPublicUrl(filePath);
+
+                      setSiteSettings({ ...siteSettings, favicon: publicUrl });
+                      toast({
+                        title: "Success",
+                        description: "Favicon uploaded successfully",
+                      });
+                    }}
                   />
+                  {siteSettings.favicon && (
+                    <img src={siteSettings.favicon} alt="Favicon" className="w-8 h-8 mt-2" />
+                  )}
                 </div>
+
                 <Button onClick={handleSaveSettings} disabled={loading}>
                   <Save className="h-4 w-4 mr-2" />
                   Save Settings

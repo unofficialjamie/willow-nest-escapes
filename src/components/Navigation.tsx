@@ -76,7 +76,7 @@ const Navigation = () => {
                     Locations
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[200px] gap-2 p-4 bg-background z-50">
+                    <ul className="grid w-[200px] gap-2 p-4 bg-popover border border-border rounded-md shadow-md z-[100]">
                       {locationItems.map((item) => (
                         <li key={item.path}>
                           <NavigationMenuLink asChild>

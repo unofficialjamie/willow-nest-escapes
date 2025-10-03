@@ -19,8 +19,10 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import HotelPoliciesPage from "./pages/HotelPoliciesPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminPages from "./pages/admin/AdminPages";
 import AdminRooms from "./pages/admin/AdminRooms";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminContent from "./pages/admin/AdminContent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +51,8 @@ const App = () => (
               <Route path="/hotel-policies" element={<HotelPoliciesPage />} />
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/pages" element={<AdminPages />} />
+              <Route path="/admin/content" element={<AdminContent />} />
               <Route path="/admin/rooms" element={<AdminRooms />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

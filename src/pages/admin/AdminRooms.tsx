@@ -255,14 +255,47 @@ const AdminRooms = () => {
                 </div>
 
                 <div>
-                  <Label>Image URL</Label>
+                  <Label>Image Upload</Label>
                   <Input
-                    value={formData.image_url}
-                    onChange={(e) =>
-                      setFormData({ ...formData, image_url: e.target.value })
-                    }
-                    placeholder="https://example.com/image.jpg"
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      
+                      const fileExt = file.name.split('.').pop();
+                      const fileName = `${Date.now()}.${fileExt}`;
+                      const filePath = `rooms/${formData.location}/${fileName}`;
+
+                      const { error: uploadError } = await supabase.storage
+                        .from('website-images')
+                        .upload(filePath, file);
+
+                      if (uploadError) {
+                        toast({
+                          title: "Error",
+                          description: "Failed to upload image",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+
+                      const { data: { publicUrl } } = supabase.storage
+                        .from('website-images')
+                        .getPublicUrl(filePath);
+
+                      setFormData({ ...formData, image_url: publicUrl });
+                      toast({
+                        title: "Success",
+                        description: "Image uploaded successfully",
+                      });
+                    }}
                   />
+                  {formData.image_url && (
+                    <div className="mt-2">
+                      <img src={formData.image_url} alt="Preview" className="w-32 h-32 object-cover rounded" />
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -24,26 +24,26 @@ const AdminDashboard = () => {
 
   const menuItems = [
     {
+      title: "Pages Management",
+      description: "Edit all website pages like a CMS - text, images, sections",
+      icon: FileText,
+      link: "/admin/pages",
+    },
+    {
       title: "Room Management",
       description: "Add, edit, and manage rooms for all locations",
       icon: Hotel,
       link: "/admin/rooms",
     },
     {
-      title: "Page Content",
-      description: "Manage content, text, and images across all pages",
-      icon: FileText,
+      title: "Content Editor",
+      description: "Quick content updates across the site",
+      icon: Image,
       link: "/admin/content",
     },
     {
-      title: "Media Library",
-      description: "Upload and manage images",
-      icon: Image,
-      link: "/admin/media",
-    },
-    {
       title: "Settings",
-      description: "Manage site settings, logos, and user accounts",
+      description: "Manage site settings, logos, favicon, and user accounts",
       icon: Settings,
       link: "/admin/settings",
     },
