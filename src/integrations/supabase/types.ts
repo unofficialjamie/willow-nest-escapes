@@ -47,6 +47,45 @@ export type Database = {
         }
         Relationships: []
       }
+      page_sections: {
+        Row: {
+          content_type: string
+          created_at: string | null
+          data: Json
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          page_name: string
+          section_key: string
+          section_title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content_type: string
+          created_at?: string | null
+          data?: Json
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          page_name: string
+          section_key: string
+          section_title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content_type?: string
+          created_at?: string | null
+          data?: Json
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          page_name?: string
+          section_key?: string
+          section_title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       rooms: {
         Row: {
           amenities: Json | null
