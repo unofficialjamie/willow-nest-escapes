@@ -251,41 +251,58 @@ const AdminPages = () => {
     );
   };
 
-  const renderEditableIcon = (sectionId: string, path: string, iconName: string) => {
-    const editKey = `${sectionId}.${path}`;
-    const isEditing = editingPath === editKey;
-
-    if (isEditing) {
-      return (
-        <div className="flex gap-2 items-center">
-          <Input
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            placeholder="Icon name (e.g., MapPin, Star)"
-            className="flex-1"
-          />
-          <Button size="sm" onClick={() => handleSaveEdit(sectionId, path)}>
-            <Save className="w-4 h-4" />
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => setEditingPath(null)}>
-            <X className="w-4 h-4" />
-          </Button>
-        </div>
-      );
-    }
-
+  const renderEditableIcon = (sectionId: string, path: string, iconValue: string) => {
+    // Check if it's an image URL or icon name
+    const isImageUrl = iconValue && (iconValue.startsWith('http') || iconValue.startsWith('/') || iconValue.startsWith('data:'));
+    
     return (
-      <div 
-        className="group relative cursor-pointer hover:bg-muted/50 p-2 rounded transition-colors border border-dashed"
-        onClick={() => {
-          setEditingPath(editKey);
-          setEditValue(iconName);
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-mono text-muted-foreground">Icon: {iconName}</span>
-          <Edit2 className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div>
+      <div className="relative group border border-dashed rounded p-3">
+        <div className="text-xs font-semibold text-muted-foreground mb-2">Icon/Image</div>
+        {isImageUrl ? (
+          <div className="relative">
+            <img src={iconValue} alt="Icon" className="w-16 h-16 object-contain rounded" />
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <Button
+                size="sm"
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.onchange = (e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0];
+                    if (file) handleImageUpload(file, sectionId, path);
+                  };
+                  input.click();
+                }}
+              >
+                <ImageIcon className="w-3 h-3 mr-1" />
+                Replace
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="text-sm font-mono text-muted-foreground mb-2">
+            Icon Name: {iconValue}
+          </div>
+        )}
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full mt-2"
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/png,image/jpeg,image/svg+xml';
+            input.onchange = (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0];
+              if (file) handleImageUpload(file, sectionId, path);
+            };
+            input.click();
+          }}
+        >
+          <ImageIcon className="w-3 h-3 mr-1" />
+          Upload Icon Image
+        </Button>
       </div>
     );
   };

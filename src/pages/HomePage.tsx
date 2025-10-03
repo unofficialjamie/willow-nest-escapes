@@ -101,14 +101,27 @@ const HomePage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {highlightsData.items?.map((highlight: any, index: number) => (
-              <AmenityCard
-                key={index}
-                icon={iconMap[highlight.icon] || MapPin}
-                title={highlight.title}
-                description={highlight.description}
-              />
-            ))}
+            {highlightsData.items?.map((highlight: any, index: number) => {
+              // Check if icon is an image URL or icon name
+              const isImageUrl = highlight.icon && (highlight.icon.startsWith('http') || highlight.icon.startsWith('/') || highlight.icon.startsWith('data:'));
+              const IconComponent = !isImageUrl && iconMap[highlight.icon] ? iconMap[highlight.icon] : null;
+              
+              return (
+                <Card key={index} className="card-luxury p-6 text-center hover-lift">
+                  <div className="mb-4 flex justify-center">
+                    {isImageUrl ? (
+                      <img src={highlight.icon} alt="" className="w-12 h-12 object-contain" />
+                    ) : IconComponent ? (
+                      <IconComponent className="h-12 w-12 text-primary" />
+                    ) : (
+                      <MapPin className="h-12 w-12 text-primary" />
+                    )}
+                  </div>
+                  <h3 className="font-heading text-lg font-semibold mb-2">{highlight.title}</h3>
+                  <p className="text-sm text-muted-foreground">{highlight.description}</p>
+                </Card>
+              );
+            })}
           </div>
         </div>
         </section>
@@ -249,11 +262,20 @@ const HomePage = () => {
                   
                   <div className="space-y-4">
                     {aboutData.values?.map((value: any, index: number) => {
-                      const IconComponent = iconMap[value.icon] || Star;
+                      // Check if icon is an image URL or icon name
+                      const isImageUrl = value.icon && (value.icon.startsWith('http') || value.icon.startsWith('/') || value.icon.startsWith('data:'));
+                      const IconComponent = !isImageUrl && iconMap[value.icon] ? iconMap[value.icon] : null;
+                      
                       return (
                         <div key={index} className="flex items-start gap-3">
                           <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                            <IconComponent className="h-4 w-4 text-primary" />
+                            {isImageUrl ? (
+                              <img src={value.icon} alt="" className="w-4 h-4 object-contain" />
+                            ) : IconComponent ? (
+                              <IconComponent className="h-4 w-4 text-primary" />
+                            ) : (
+                              <Star className="h-4 w-4 text-primary" />
+                            )}
                           </div>
                           <div>
                             <h5 className="font-semibold mb-1">{value.title}</h5>
@@ -321,14 +343,27 @@ const HomePage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {amenitiesData.items?.map((amenity: any, index: number) => (
-                <AmenityCard
-                  key={index}
-                  icon={iconMap[amenity.icon] || Wifi}
-                  title={amenity.title}
-                  description={amenity.description}
-                />
-              ))}
+              {amenitiesData.items?.map((amenity: any, index: number) => {
+                // Check if icon is an image URL or icon name
+                const isImageUrl = amenity.icon && (amenity.icon.startsWith('http') || amenity.icon.startsWith('/') || amenity.icon.startsWith('data:'));
+                const IconComponent = !isImageUrl && iconMap[amenity.icon] ? iconMap[amenity.icon] : null;
+                
+                return (
+                  <Card key={index} className="card-luxury p-6 text-center hover-lift">
+                    <div className="mb-4 flex justify-center">
+                      {isImageUrl ? (
+                        <img src={amenity.icon} alt="" className="w-12 h-12 object-contain" />
+                      ) : IconComponent ? (
+                        <IconComponent className="h-12 w-12 text-primary" />
+                      ) : (
+                        <Wifi className="h-12 w-12 text-primary" />
+                      )}
+                    </div>
+                    <h3 className="font-heading text-lg font-semibold mb-2">{amenity.title}</h3>
+                    <p className="text-sm text-muted-foreground">{amenity.description}</p>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
