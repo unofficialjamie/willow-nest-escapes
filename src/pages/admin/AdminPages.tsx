@@ -552,8 +552,29 @@ const AdminPages = () => {
         );
       }
 
+      // Handle ctaText and ctaLink pattern (for location pages)
+      if (key === 'ctaText' && typeof value === 'string') {
+        const parentPath = path || '';
+        let linkValue = '';
+        if (parentPath) {
+          const parentObj = parentPath.split('.').reduce((obj: any, k: string) => obj?.[k], data);
+          linkValue = parentObj?.['ctaLink'] || '';
+        } else {
+          linkValue = data['ctaLink'] || '';
+        }
+        
+        const linkPath = parentPath ? `${parentPath}.ctaLink` : 'ctaLink';
+        
+        return (
+          <div key={currentPath} className="mb-4">
+            <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">CTA Button</div>
+            {renderEditableButton(sectionId, currentPath, linkPath, value, linkValue)}
+          </div>
+        );
+      }
+
       // Skip _link fields as they're handled with their button
-      if (key.includes('_link') || key === 'button_link') return null;
+      if (key.includes('_link') || key === 'button_link' || key === 'ctaLink') return null;
 
       // Handle regular text (short)
       if (typeof value === 'string' && value.length < 100) {
