@@ -134,7 +134,7 @@ const SeedData = () => {
         <CardHeader>
           <CardTitle>Seed Page Sections</CardTitle>
           <CardDescription>
-            Add default content for all missing pages (Locations, Ibadan, Ogbomosho, Abuja, Privacy Policy, Hotel Policies)
+            Initialize or update content for location pages (Ibadan, Abuja, Ogbomosho), Privacy Policy, and Hotel Policies
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,8 +143,9 @@ const SeedData = () => {
             Seed Page Content
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
-            This will add default sections for all pages that currently have no content.
-            You can edit this content later in the Pages Management section.
+            <strong>IMPORTANT:</strong> If you have old location page data, this will ADD new data with updated structure.
+            You may need to manually delete old entries via the Backend to avoid duplicates.
+            After seeding, all location pages will match the frontend design.
           </p>
         </CardContent>
       </Card>
