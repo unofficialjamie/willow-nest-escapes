@@ -27,6 +27,25 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import deluxeKing from "@/assets/rooms/deluxe-king.jpg";
+import executiveSuite from "@/assets/rooms/executive-suite.jpg";
+import superiorTwin from "@/assets/rooms/superior-twin.jpg";
+import premiumQueen from "@/assets/rooms/premium-queen.jpg";
+import presidentialSuite from "@/assets/rooms/presidential-suite.jpg";
+import standardDouble from "@/assets/rooms/standard-double.jpg";
+import familyRoom from "@/assets/rooms/family-room.jpg";
+import businessKing from "@/assets/rooms/business-king.jpg";
+
+const roomImageMap: Record<string, string> = {
+  "deluxe-king": deluxeKing,
+  "executive-suite": executiveSuite,
+  "superior-twin": superiorTwin,
+  "premium-queen": premiumQueen,
+  "presidential-suite": presidentialSuite,
+  "standard-double": standardDouble,
+  "family-room": familyRoom,
+  "business-king": businessKing
+};
 
 interface Room {
   id: string;
@@ -85,7 +104,15 @@ const AdminRooms = () => {
         variant: "destructive",
       });
     } else {
-      setRooms(data || []);
+      // Map image URLs to imported images
+      const roomsWithImages = (data || []).map(room => {
+        const imageKey = room.image_url?.split('/').pop()?.replace('.jpg', '') || '';
+        return {
+          ...room,
+          displayImage: roomImageMap[imageKey] || room.image_url || deluxeKing
+        };
+      });
+      setRooms(roomsWithImages as any);
     }
     setLoading(false);
   };
@@ -374,9 +401,9 @@ const AdminRooms = () => {
           {rooms.map((room) => (
             <Card key={room.id}>
               <CardHeader>
-                {room.image_url && (
+                {((room as any).displayImage || room.image_url) && (
                   <img
-                    src={room.image_url}
+                    src={(room as any).displayImage || room.image_url}
                     alt={room.name}
                     className="w-full h-48 object-cover rounded-md mb-4"
                   />
