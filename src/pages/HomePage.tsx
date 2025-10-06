@@ -100,7 +100,7 @@ const HomePage = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {highlightsData.items?.map((highlight: any, index: number) => {
               // Check if icon is an image URL or icon name
               const isImageUrl = highlight.icon && (highlight.icon.startsWith('http') || highlight.icon.startsWith('/') || highlight.icon.startsWith('data:'));

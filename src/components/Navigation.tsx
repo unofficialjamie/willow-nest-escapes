@@ -47,7 +47,7 @@ const Navigation = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-8">
             <Link
               to="/"
               className={`font-medium transition-colors hover:text-primary ${
@@ -134,7 +134,7 @@ const Navigation = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -147,7 +147,7 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden py-4 animate-slide-in">
+          <div className="lg:hidden py-4 animate-slide-in">
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
                 <Link
