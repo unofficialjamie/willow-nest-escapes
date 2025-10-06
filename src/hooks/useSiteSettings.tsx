@@ -6,6 +6,9 @@ export interface SiteSettings {
   footer_logo: string;
   favicon: string;
   site_name: string;
+  instagram_url: string;
+  facebook_url: string;
+  linkedin_url: string;
 }
 
 export const useSiteSettings = () => {
@@ -14,6 +17,9 @@ export const useSiteSettings = () => {
     footer_logo: "/logo-full.jpg",
     favicon: "/favicon.ico",
     site_name: "The Willow Nest Hotel",
+    instagram_url: "",
+    facebook_url: "",
+    linkedin_url: "",
   });
   const [loading, setLoading] = useState(true);
 
@@ -38,6 +44,9 @@ export const useSiteSettings = () => {
           footer_logo: settingsMap.footer_logo || settingsMap.site_logo || "/logo-full.jpg",
           favicon: settingsMap.site_favicon || settingsMap.favicon || "/favicon.ico",
           site_name: settingsMap.site_name || "The Willow Nest Hotel",
+          instagram_url: settingsMap.instagram_url || "",
+          facebook_url: settingsMap.facebook_url || "",
+          linkedin_url: settingsMap.linkedin_url || "",
         });
 
         // Update favicon dynamically

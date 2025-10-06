@@ -18,6 +18,9 @@ const AdminSettings = () => {
     header_logo: "",
     footer_logo: "",
     favicon: "",
+    instagram_url: "",
+    facebook_url: "",
+    linkedin_url: "",
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -43,10 +46,16 @@ const AdminSettings = () => {
         acc[setting.setting_key] = setting.setting_value;
         return acc;
       }, {} as any);
+      
+      console.log("Fetched settings:", settings);
+      
       setSiteSettings({
-        header_logo: settings.site_logo || settings.header_logo || "",
-        footer_logo: settings.footer_logo || settings.site_logo || "",
-        favicon: settings.site_favicon || settings.favicon || "",
+        header_logo: settings.site_logo || settings.header_logo || "/logo-full.jpg",
+        footer_logo: settings.footer_logo || settings.site_logo || "/logo-full.jpg",
+        favicon: settings.site_favicon || settings.favicon || "/favicon.ico",
+        instagram_url: settings.instagram_url || "",
+        facebook_url: settings.facebook_url || "",
+        linkedin_url: settings.linkedin_url || "",
       });
     }
   };
@@ -71,8 +80,22 @@ const AdminSettings = () => {
       .from("site_settings")
       .upsert({ setting_key: 'site_favicon', setting_value: siteSettings.favicon });
 
+    // Save social media links
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'instagram_url', setting_value: siteSettings.instagram_url });
+    
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'facebook_url', setting_value: siteSettings.facebook_url });
+    
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'linkedin_url', setting_value: siteSettings.linkedin_url });
+
     toast({ title: "Success", description: "Settings saved successfully" });
     setLoading(false);
+    fetchSettings(); // Refresh to show updated data
   };
 
   const handlePasswordChange = async () => {
@@ -292,6 +315,42 @@ const AdminSettings = () => {
                       });
                     }}
                   />
+                </div>
+
+                <div className="border-t pt-6 mt-6">
+                  <h3 className="text-lg font-semibold mb-4">Social Media Links</h3>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Instagram URL</Label>
+                      <Input
+                        type="url"
+                        placeholder="https://instagram.com/yourhotel"
+                        value={siteSettings.instagram_url}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, instagram_url: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Facebook URL</Label>
+                      <Input
+                        type="url"
+                        placeholder="https://facebook.com/yourhotel"
+                        value={siteSettings.facebook_url}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, facebook_url: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>LinkedIn URL</Label>
+                      <Input
+                        type="url"
+                        placeholder="https://linkedin.com/company/yourhotel"
+                        value={siteSettings.linkedin_url}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, linkedin_url: e.target.value })}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <Button onClick={handleSaveSettings} disabled={loading}>

@@ -20,9 +20,21 @@ const Footer = () => {
               Experience timeless elegance, modern luxury, and authentic cultural touches across Nigeria.
             </p>
             <div className="flex space-x-4">
-              <Instagram className="h-5 w-5 hover:text-primary cursor-pointer transition-colors" />
-              <Facebook className="h-5 w-5 hover:text-primary cursor-pointer transition-colors" />
-              <Linkedin className="h-5 w-5 hover:text-primary cursor-pointer transition-colors" />
+              {settings.instagram_url && (
+                <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer">
+                  <Instagram className="h-5 w-5 hover:text-primary cursor-pointer transition-colors" />
+                </a>
+              )}
+              {settings.facebook_url && (
+                <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer">
+                  <Facebook className="h-5 w-5 hover:text-primary cursor-pointer transition-colors" />
+                </a>
+              )}
+              {settings.linkedin_url && (
+                <a href={settings.linkedin_url} target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="h-5 w-5 hover:text-primary cursor-pointer transition-colors" />
+                </a>
+              )}
             </div>
           </div>
 
