@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   Sidebar,
   SidebarContent,
@@ -38,6 +39,7 @@ const menuItems = [
 function AdminSidebar() {
   const { state } = useSidebar();
   const { user, signOut } = useAdminAuth();
+  const { settings } = useSiteSettings();
 
   return (
     <Sidebar className="border-r">
@@ -49,7 +51,7 @@ function AdminSidebar() {
             </div>
             {state !== "collapsed" && (
               <div>
-                <h2 className="font-bold text-lg">Signature Hotels</h2>
+                <h2 className="font-bold text-lg">{settings.site_name}</h2>
                 <p className="text-xs text-muted-foreground">Admin Panel</p>
               </div>
             )}
