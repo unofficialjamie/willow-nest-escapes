@@ -290,7 +290,7 @@ const HomePage = () => {
               
               <div className="text-center">
                 <Link to={aboutData.cta_link || "/about"}>
-                  <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-secondary">
+                  <Button variant="outline-light" size="lg">
                     {aboutData.cta_text}
                   </Button>
                 </Link>
@@ -443,7 +443,7 @@ const HomePage = () => {
             <Button size="lg" variant="luxury" className="text-lg px-8 py-4">
               {ctaData.cta_primary}
             </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-secondary">
+            <Button variant="outline-light" size="lg" className="text-lg px-8 py-4">
               {ctaData.cta_secondary}
             </Button>
           </div>

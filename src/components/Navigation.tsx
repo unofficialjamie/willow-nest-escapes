@@ -149,18 +149,25 @@ const Navigation = () => {
         {isOpen && (
           <div className="lg:hidden py-4 animate-slide-in">
             <div className="flex flex-col space-y-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`font-medium transition-colors hover:text-primary px-4 py-2 ${
-                    isActive(item.path) ? "text-primary" : "text-foreground"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              <Link
+                to="/"
+                className={`font-medium transition-colors hover:text-primary px-4 py-2 ${
+                  isActive("/") ? "text-primary" : "text-foreground"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Home
+              </Link>
+              
+              <Link
+                to="/about"
+                className={`font-medium transition-colors hover:text-primary px-4 py-2 ${
+                  isActive("/about") ? "text-primary" : "text-foreground"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                About
+              </Link>
               
               <div className="px-4">
                 <button
@@ -188,6 +195,36 @@ const Navigation = () => {
                   </div>
                 )}
               </div>
+              
+              <Link
+                to="/facilities"
+                className={`font-medium transition-colors hover:text-primary px-4 py-2 ${
+                  isActive("/facilities") ? "text-primary" : "text-foreground"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Facilities
+              </Link>
+              
+              <Link
+                to="/contact"
+                className={`font-medium transition-colors hover:text-primary px-4 py-2 ${
+                  isActive("/contact") ? "text-primary" : "text-foreground"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                Contact
+              </Link>
+              
+              <Link
+                to="/faq"
+                className={`font-medium transition-colors hover:text-primary px-4 py-2 ${
+                  isActive("/faq") ? "text-primary" : "text-foreground"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                FAQ
+              </Link>
               
               <div className="px-4">
                 <Button variant="luxury" className="w-full">
