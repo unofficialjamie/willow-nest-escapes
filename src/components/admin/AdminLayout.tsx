@@ -42,7 +42,7 @@ function AdminSidebar() {
   const { settings } = useSiteSettings();
 
   return (
-    <Sidebar className="border-r">
+    <Sidebar className="border-r z-50">
       <SidebarContent>
         <div className="p-4 border-b">
           <div className="flex items-center gap-3">
