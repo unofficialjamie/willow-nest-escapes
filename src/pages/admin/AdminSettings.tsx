@@ -217,15 +217,7 @@ const AdminSettings = () => {
                       />
                     </div>
                   )}
-                  <div className="space-y-2">
-                    <Label className="text-sm">Upload Image or Enter URL</Label>
-                    <Input
-                      type="text"
-                      placeholder="https://example.com/logo.png or paste image URL"
-                      value={siteSettings.header_logo}
-                      onChange={(e) => setSiteSettings({ ...siteSettings, header_logo: e.target.value })}
-                    />
-                    <p className="text-xs text-muted-foreground">Or upload a file:</p>
+                  <div className="flex items-center gap-2">
                     <Input
                       type="file"
                       accept="image/*"
@@ -300,15 +292,7 @@ const AdminSettings = () => {
                       />
                     </div>
                   )}
-                  <div className="space-y-2">
-                    <Label className="text-sm">Upload Image or Enter URL</Label>
-                    <Input
-                      type="text"
-                      placeholder="https://example.com/logo.png or paste image URL"
-                      value={siteSettings.footer_logo}
-                      onChange={(e) => setSiteSettings({ ...siteSettings, footer_logo: e.target.value })}
-                    />
-                    <p className="text-xs text-muted-foreground">Or upload a file:</p>
+                  <div className="flex items-center gap-2">
                     <Input
                       type="file"
                       accept="image/*"
@@ -383,15 +367,7 @@ const AdminSettings = () => {
                       />
                     </div>
                   )}
-                  <div className="space-y-2">
-                    <Label className="text-sm">Upload Image or Enter URL</Label>
-                    <Input
-                      type="text"
-                      placeholder="https://example.com/favicon.ico"
-                      value={siteSettings.favicon}
-                      onChange={(e) => setSiteSettings({ ...siteSettings, favicon: e.target.value })}
-                    />
-                    <p className="text-xs text-muted-foreground">Or upload a file:</p>
+                  <div className="flex items-center gap-2">
                     <Input
                       type="file"
                       accept="image/x-icon,image/png,image/svg+xml"
