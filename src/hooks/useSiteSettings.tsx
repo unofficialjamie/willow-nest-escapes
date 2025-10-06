@@ -12,15 +12,28 @@ export interface SiteSettings {
 }
 
 export const useSiteSettings = () => {
-  const [settings, setSettings] = useState<SiteSettings>({
-    header_logo: "/logo-full.jpg",
-    footer_logo: "/logo-full.jpg",
-    favicon: "/favicon.ico",
-    site_name: "The Willow Nest Hotel",
-    instagram_url: "",
-    facebook_url: "",
-    linkedin_url: "",
-  });
+  // Load from localStorage immediately to prevent flash
+  const getCachedSettings = (): SiteSettings => {
+    try {
+      const cached = localStorage.getItem('site_settings');
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      console.error("Error loading cached settings:", err);
+    }
+    return {
+      header_logo: "/logo-full.jpg",
+      footer_logo: "/logo-full.jpg",
+      favicon: "/favicon.ico",
+      site_name: "The Willow Nest Hotel",
+      instagram_url: "",
+      facebook_url: "",
+      linkedin_url: "",
+    };
+  };
+
+  const [settings, setSettings] = useState<SiteSettings>(getCachedSettings());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +52,7 @@ export const useSiteSettings = () => {
           return acc;
         }, {} as any);
 
-        setSettings({
+        const newSettings = {
           header_logo: settingsMap.site_logo || settingsMap.header_logo || "/logo-full.jpg",
           footer_logo: settingsMap.footer_logo || settingsMap.site_logo || "/logo-full.jpg",
           favicon: settingsMap.site_favicon || settingsMap.favicon || "/favicon.ico",
@@ -47,7 +60,11 @@ export const useSiteSettings = () => {
           instagram_url: settingsMap.instagram_url || "",
           facebook_url: settingsMap.facebook_url || "",
           linkedin_url: settingsMap.linkedin_url || "",
-        });
+        };
+        
+        // Cache settings in localStorage for instant loading
+        localStorage.setItem('site_settings', JSON.stringify(newSettings));
+        setSettings(newSettings);
 
         // Update favicon dynamically
         if (settingsMap.site_favicon || settingsMap.favicon) {

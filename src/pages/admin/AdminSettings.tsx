@@ -107,6 +107,9 @@ const AdminSettings = () => {
     toast({ title: "Success", description: "Settings saved successfully" });
     setLoading(false);
     
+    // Clear localStorage cache so new settings load immediately
+    localStorage.removeItem('site_settings');
+    
     // Reload page to ensure all components see the updated logos
     setTimeout(() => {
       window.location.reload();
