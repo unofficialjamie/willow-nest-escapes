@@ -71,7 +71,7 @@ const HomePage = () => {
             <p className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
               {heroData.description}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-2 -mb-8">
               <Button size="lg" variant="luxury" className="text-lg px-8 py-6">
                 {heroData.cta_primary}
               </Button>
@@ -83,13 +83,13 @@ const HomePage = () => {
         </div>
         
         {/* Booking Form Overlay */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-7xl px-4">
+        <div className="absolute -bottom-12 md:-bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-7xl px-4">
           <BookingForm variant="hero" showLocationSelector={true} />
         </div>
       </section>
 
       {/* Quick Highlights */}
-      <section className="py-16 bg-background">
+      <section className="py-16 pt-24 md:pt-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
