@@ -24,6 +24,8 @@ const AdminSettings = () => {
     linkedin_url: "",
   });
 
+  const [uploadingLogo, setUploadingLogo] = useState<'header' | 'footer' | 'favicon' | null>(null);
+
   const [passwordData, setPasswordData] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -205,44 +207,74 @@ const AdminSettings = () => {
                   {siteSettings.header_logo && (
                     <div className="mb-4 p-4 border rounded-lg bg-muted/20">
                       <p className="text-sm text-muted-foreground mb-2">Current logo:</p>
-                      <img src={siteSettings.header_logo} alt="Header Logo" className="w-48 h-auto" />
+                      <img 
+                        src={siteSettings.header_logo} 
+                        alt="Header Logo" 
+                        className="w-48 h-auto"
+                        onError={(e) => {
+                          console.error("Failed to load header logo:", siteSettings.header_logo);
+                        }}
+                      />
                     </div>
                   )}
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      
-                      const fileExt = file.name.split('.').pop();
-                      const fileName = `header-logo-${Date.now()}.${fileExt}`;
-                      const filePath = `site/${fileName}`;
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingLogo === 'header'}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        setUploadingLogo('header');
+                        console.log("Uploading header logo:", file.name);
+                        
+                        try {
+                          const fileExt = file.name.split('.').pop();
+                          const fileName = `header-logo-${Date.now()}.${fileExt}`;
+                          const filePath = `site/${fileName}`;
 
-                      const { error: uploadError } = await supabase.storage
-                        .from('website-images')
-                        .upload(filePath, file, { upsert: true });
+                          const { error: uploadError, data: uploadData } = await supabase.storage
+                            .from('website-images')
+                            .upload(filePath, file, { upsert: true });
 
-                      if (uploadError) {
-                        toast({
-                          title: "Error",
-                          description: "Failed to upload logo",
-                          variant: "destructive",
-                        });
-                        return;
-                      }
+                          if (uploadError) {
+                            console.error("Upload error:", uploadError);
+                            toast({
+                              title: "Error",
+                              description: `Failed to upload logo: ${uploadError.message}`,
+                              variant: "destructive",
+                            });
+                            return;
+                          }
 
-                      const { data: { publicUrl } } = supabase.storage
-                        .from('website-images')
-                        .getPublicUrl(filePath);
+                          console.log("Upload successful:", uploadData);
 
-                      setSiteSettings({ ...siteSettings, header_logo: publicUrl });
-                      toast({
-                        title: "Success",
-                        description: "Logo uploaded successfully. Click 'Save Settings' to apply changes.",
-                      });
-                    }}
-                  />
+                          const { data: { publicUrl } } = supabase.storage
+                            .from('website-images')
+                            .getPublicUrl(filePath);
+
+                          console.log("Public URL:", publicUrl);
+                          setSiteSettings({ ...siteSettings, header_logo: publicUrl });
+                          toast({
+                            title: "Success",
+                            description: "Logo uploaded! Click 'Save Settings' to apply changes.",
+                          });
+                        } catch (error) {
+                          console.error("Unexpected error:", error);
+                          toast({
+                            title: "Error",
+                            description: "An unexpected error occurred",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploadingLogo(null);
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                    {uploadingLogo === 'header' && <span className="text-sm text-muted-foreground">Uploading...</span>}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -250,44 +282,74 @@ const AdminSettings = () => {
                   {siteSettings.footer_logo && (
                     <div className="mb-4 p-4 border rounded-lg bg-muted/20">
                       <p className="text-sm text-muted-foreground mb-2">Current logo:</p>
-                      <img src={siteSettings.footer_logo} alt="Footer Logo" className="w-48 h-auto" />
+                      <img 
+                        src={siteSettings.footer_logo} 
+                        alt="Footer Logo" 
+                        className="w-48 h-auto"
+                        onError={(e) => {
+                          console.error("Failed to load footer logo:", siteSettings.footer_logo);
+                        }}
+                      />
                     </div>
                   )}
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      
-                      const fileExt = file.name.split('.').pop();
-                      const fileName = `footer-logo-${Date.now()}.${fileExt}`;
-                      const filePath = `site/${fileName}`;
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingLogo === 'footer'}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        setUploadingLogo('footer');
+                        console.log("Uploading footer logo:", file.name);
+                        
+                        try {
+                          const fileExt = file.name.split('.').pop();
+                          const fileName = `footer-logo-${Date.now()}.${fileExt}`;
+                          const filePath = `site/${fileName}`;
 
-                      const { error: uploadError } = await supabase.storage
-                        .from('website-images')
-                        .upload(filePath, file, { upsert: true });
+                          const { error: uploadError, data: uploadData } = await supabase.storage
+                            .from('website-images')
+                            .upload(filePath, file, { upsert: true });
 
-                      if (uploadError) {
-                        toast({
-                          title: "Error",
-                          description: "Failed to upload logo",
-                          variant: "destructive",
-                        });
-                        return;
-                      }
+                          if (uploadError) {
+                            console.error("Upload error:", uploadError);
+                            toast({
+                              title: "Error",
+                              description: `Failed to upload logo: ${uploadError.message}`,
+                              variant: "destructive",
+                            });
+                            return;
+                          }
 
-                      const { data: { publicUrl } } = supabase.storage
-                        .from('website-images')
-                        .getPublicUrl(filePath);
+                          console.log("Upload successful:", uploadData);
 
-                      setSiteSettings({ ...siteSettings, footer_logo: publicUrl });
-                      toast({
-                        title: "Success",
-                        description: "Logo uploaded successfully. Click 'Save Settings' to apply changes.",
-                      });
-                    }}
-                  />
+                          const { data: { publicUrl } } = supabase.storage
+                            .from('website-images')
+                            .getPublicUrl(filePath);
+
+                          console.log("Public URL:", publicUrl);
+                          setSiteSettings({ ...siteSettings, footer_logo: publicUrl });
+                          toast({
+                            title: "Success",
+                            description: "Logo uploaded! Click 'Save Settings' to apply changes.",
+                          });
+                        } catch (error) {
+                          console.error("Unexpected error:", error);
+                          toast({
+                            title: "Error",
+                            description: "An unexpected error occurred",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploadingLogo(null);
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                    {uploadingLogo === 'footer' && <span className="text-sm text-muted-foreground">Uploading...</span>}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -295,44 +357,74 @@ const AdminSettings = () => {
                   {siteSettings.favicon && (
                     <div className="mb-4 p-4 border rounded-lg bg-muted/20">
                       <p className="text-sm text-muted-foreground mb-2">Current favicon:</p>
-                      <img src={siteSettings.favicon} alt="Favicon" className="w-8 h-8" />
+                      <img 
+                        src={siteSettings.favicon} 
+                        alt="Favicon" 
+                        className="w-8 h-8"
+                        onError={(e) => {
+                          console.error("Failed to load favicon:", siteSettings.favicon);
+                        }}
+                      />
                     </div>
                   )}
-                  <Input
-                    type="file"
-                    accept="image/x-icon,image/png,image/svg+xml"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      
-                      const fileExt = file.name.split('.').pop();
-                      const fileName = `favicon-${Date.now()}.${fileExt}`;
-                      const filePath = `site/${fileName}`;
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="file"
+                      accept="image/x-icon,image/png,image/svg+xml"
+                      disabled={uploadingLogo === 'favicon'}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        setUploadingLogo('favicon');
+                        console.log("Uploading favicon:", file.name);
+                        
+                        try {
+                          const fileExt = file.name.split('.').pop();
+                          const fileName = `favicon-${Date.now()}.${fileExt}`;
+                          const filePath = `site/${fileName}`;
 
-                      const { error: uploadError } = await supabase.storage
-                        .from('website-images')
-                        .upload(filePath, file, { upsert: true });
+                          const { error: uploadError, data: uploadData } = await supabase.storage
+                            .from('website-images')
+                            .upload(filePath, file, { upsert: true });
 
-                      if (uploadError) {
-                        toast({
-                          title: "Error",
-                          description: "Failed to upload favicon",
-                          variant: "destructive",
-                        });
-                        return;
-                      }
+                          if (uploadError) {
+                            console.error("Upload error:", uploadError);
+                            toast({
+                              title: "Error",
+                              description: `Failed to upload favicon: ${uploadError.message}`,
+                              variant: "destructive",
+                            });
+                            return;
+                          }
 
-                      const { data: { publicUrl } } = supabase.storage
-                        .from('website-images')
-                        .getPublicUrl(filePath);
+                          console.log("Upload successful:", uploadData);
 
-                      setSiteSettings({ ...siteSettings, favicon: publicUrl });
-                      toast({
-                        title: "Success",
-                        description: "Favicon uploaded successfully. Click 'Save Settings' to apply changes.",
-                      });
-                    }}
-                  />
+                          const { data: { publicUrl } } = supabase.storage
+                            .from('website-images')
+                            .getPublicUrl(filePath);
+
+                          console.log("Public URL:", publicUrl);
+                          setSiteSettings({ ...siteSettings, favicon: publicUrl });
+                          toast({
+                            title: "Success",
+                            description: "Favicon uploaded! Click 'Save Settings' to apply changes.",
+                          });
+                        } catch (error) {
+                          console.error("Unexpected error:", error);
+                          toast({
+                            title: "Error",
+                            description: "An unexpected error occurred",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploadingLogo(null);
+                          e.target.value = '';
+                        }
+                      }}
+                    />
+                    {uploadingLogo === 'favicon' && <span className="text-sm text-muted-foreground">Uploading...</span>}
+                  </div>
                 </div>
 
                 <div className="border-t pt-6 mt-6">
