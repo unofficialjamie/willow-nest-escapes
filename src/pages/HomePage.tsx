@@ -107,18 +107,18 @@ const HomePage = () => {
               const IconComponent = !isImageUrl && iconMap[highlight.icon] ? iconMap[highlight.icon] : null;
               
               return (
-                <Card key={index} className="card-luxury p-6 text-center hover-lift">
+                <Card key={index} className="card-luxury p-6 text-center hover-lift h-full flex flex-col">
                   <div className="mb-4 flex justify-center">
                     {isImageUrl ? (
-                      <img src={highlight.icon} alt="" className="w-12 h-12 object-contain" />
+                      <img src={highlight.icon} alt="" className="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
                     ) : IconComponent ? (
-                      <IconComponent className="h-12 w-12 text-primary" />
+                      <IconComponent className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
                     ) : (
-                      <MapPin className="h-12 w-12 text-primary" />
+                      <MapPin className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
                     )}
                   </div>
                   <h3 className="font-heading text-lg font-semibold mb-2">{highlight.title}</h3>
-                  <p className="text-sm text-muted-foreground">{highlight.description}</p>
+                  <p className="text-sm text-muted-foreground flex-1">{highlight.description}</p>
                 </Card>
               );
             })}
@@ -268,13 +268,13 @@ const HomePage = () => {
                       
                       return (
                         <div key={index} className="flex items-start gap-3">
-                          <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                             {isImageUrl ? (
-                              <img src={value.icon} alt="" className="w-4 h-4 object-contain" />
+                              <img src={value.icon} alt="" className="w-3 h-3 sm:w-4 sm:h-4 object-contain" />
                             ) : IconComponent ? (
-                              <IconComponent className="h-4 w-4 text-primary" />
+                              <IconComponent className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                             ) : (
-                              <Star className="h-4 w-4 text-primary" />
+                              <Star className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                             )}
                           </div>
                           <div>
@@ -342,25 +342,25 @@ const HomePage = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {amenitiesData.items?.map((amenity: any, index: number) => {
                 // Check if icon is an image URL or icon name
                 const isImageUrl = amenity.icon && (amenity.icon.startsWith('http') || amenity.icon.startsWith('/') || amenity.icon.startsWith('data:'));
                 const IconComponent = !isImageUrl && iconMap[amenity.icon] ? iconMap[amenity.icon] : null;
                 
                 return (
-                  <Card key={index} className="card-luxury p-6 text-center hover-lift">
+                  <Card key={index} className="card-luxury p-6 text-center hover-lift h-full flex flex-col">
                     <div className="mb-4 flex justify-center">
                       {isImageUrl ? (
-                        <img src={amenity.icon} alt="" className="w-12 h-12 object-contain" />
+                        <img src={amenity.icon} alt="" className="w-8 h-8 sm:w-12 sm:h-12 object-contain" />
                       ) : IconComponent ? (
-                        <IconComponent className="h-12 w-12 text-primary" />
+                        <IconComponent className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
                       ) : (
-                        <Wifi className="h-12 w-12 text-primary" />
+                        <Wifi className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
                       )}
                     </div>
                     <h3 className="font-heading text-lg font-semibold mb-2">{amenity.title}</h3>
-                    <p className="text-sm text-muted-foreground">{amenity.description}</p>
+                    <p className="text-sm text-muted-foreground flex-1">{amenity.description}</p>
                   </Card>
                 );
               })}
