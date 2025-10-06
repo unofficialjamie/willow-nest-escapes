@@ -222,55 +222,32 @@ const AdminSettings = () => {
                       type="file"
                       accept="image/*"
                       disabled={uploadingLogo === 'header'}
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
                         
                         setUploadingLogo('header');
-                        console.log("Uploading header logo:", file.name);
                         
-                        try {
-                          const fileExt = file.name.split('.').pop();
-                          const fileName = `header-logo-${Date.now()}.${fileExt}`;
-                          const filePath = `site/${fileName}`;
-
-                          const { error: uploadError, data: uploadData } = await supabase.storage
-                            .from('website-images')
-                            .upload(filePath, file, { upsert: true });
-
-                          if (uploadError) {
-                            console.error("Upload error:", uploadError);
-                            toast({
-                              title: "Error",
-                              description: `Failed to upload logo: ${uploadError.message}`,
-                              variant: "destructive",
-                            });
-                            return;
-                          }
-
-                          console.log("Upload successful:", uploadData);
-
-                          const { data: { publicUrl } } = supabase.storage
-                            .from('website-images')
-                            .getPublicUrl(filePath);
-
-                          console.log("Public URL:", publicUrl);
-                          setSiteSettings({ ...siteSettings, header_logo: publicUrl });
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setSiteSettings({ ...siteSettings, header_logo: reader.result as string });
                           toast({
                             title: "Success",
                             description: "Logo uploaded! Click 'Save Settings' to apply changes.",
                           });
-                        } catch (error) {
-                          console.error("Unexpected error:", error);
-                          toast({
-                            title: "Error",
-                            description: "An unexpected error occurred",
-                            variant: "destructive",
-                          });
-                        } finally {
                           setUploadingLogo(null);
                           e.target.value = '';
-                        }
+                        };
+                        reader.onerror = () => {
+                          toast({
+                            title: "Error",
+                            description: "Failed to read file",
+                            variant: "destructive",
+                          });
+                          setUploadingLogo(null);
+                          e.target.value = '';
+                        };
+                        reader.readAsDataURL(file);
                       }}
                     />
                     {uploadingLogo === 'header' && <span className="text-sm text-muted-foreground">Uploading...</span>}
@@ -297,55 +274,32 @@ const AdminSettings = () => {
                       type="file"
                       accept="image/*"
                       disabled={uploadingLogo === 'footer'}
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
                         
                         setUploadingLogo('footer');
-                        console.log("Uploading footer logo:", file.name);
                         
-                        try {
-                          const fileExt = file.name.split('.').pop();
-                          const fileName = `footer-logo-${Date.now()}.${fileExt}`;
-                          const filePath = `site/${fileName}`;
-
-                          const { error: uploadError, data: uploadData } = await supabase.storage
-                            .from('website-images')
-                            .upload(filePath, file, { upsert: true });
-
-                          if (uploadError) {
-                            console.error("Upload error:", uploadError);
-                            toast({
-                              title: "Error",
-                              description: `Failed to upload logo: ${uploadError.message}`,
-                              variant: "destructive",
-                            });
-                            return;
-                          }
-
-                          console.log("Upload successful:", uploadData);
-
-                          const { data: { publicUrl } } = supabase.storage
-                            .from('website-images')
-                            .getPublicUrl(filePath);
-
-                          console.log("Public URL:", publicUrl);
-                          setSiteSettings({ ...siteSettings, footer_logo: publicUrl });
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setSiteSettings({ ...siteSettings, footer_logo: reader.result as string });
                           toast({
                             title: "Success",
                             description: "Logo uploaded! Click 'Save Settings' to apply changes.",
                           });
-                        } catch (error) {
-                          console.error("Unexpected error:", error);
-                          toast({
-                            title: "Error",
-                            description: "An unexpected error occurred",
-                            variant: "destructive",
-                          });
-                        } finally {
                           setUploadingLogo(null);
                           e.target.value = '';
-                        }
+                        };
+                        reader.onerror = () => {
+                          toast({
+                            title: "Error",
+                            description: "Failed to read file",
+                            variant: "destructive",
+                          });
+                          setUploadingLogo(null);
+                          e.target.value = '';
+                        };
+                        reader.readAsDataURL(file);
                       }}
                     />
                     {uploadingLogo === 'footer' && <span className="text-sm text-muted-foreground">Uploading...</span>}
@@ -372,55 +326,32 @@ const AdminSettings = () => {
                       type="file"
                       accept="image/x-icon,image/png,image/svg+xml"
                       disabled={uploadingLogo === 'favicon'}
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
                         
                         setUploadingLogo('favicon');
-                        console.log("Uploading favicon:", file.name);
                         
-                        try {
-                          const fileExt = file.name.split('.').pop();
-                          const fileName = `favicon-${Date.now()}.${fileExt}`;
-                          const filePath = `site/${fileName}`;
-
-                          const { error: uploadError, data: uploadData } = await supabase.storage
-                            .from('website-images')
-                            .upload(filePath, file, { upsert: true });
-
-                          if (uploadError) {
-                            console.error("Upload error:", uploadError);
-                            toast({
-                              title: "Error",
-                              description: `Failed to upload favicon: ${uploadError.message}`,
-                              variant: "destructive",
-                            });
-                            return;
-                          }
-
-                          console.log("Upload successful:", uploadData);
-
-                          const { data: { publicUrl } } = supabase.storage
-                            .from('website-images')
-                            .getPublicUrl(filePath);
-
-                          console.log("Public URL:", publicUrl);
-                          setSiteSettings({ ...siteSettings, favicon: publicUrl });
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setSiteSettings({ ...siteSettings, favicon: reader.result as string });
                           toast({
                             title: "Success",
                             description: "Favicon uploaded! Click 'Save Settings' to apply changes.",
                           });
-                        } catch (error) {
-                          console.error("Unexpected error:", error);
-                          toast({
-                            title: "Error",
-                            description: "An unexpected error occurred",
-                            variant: "destructive",
-                          });
-                        } finally {
                           setUploadingLogo(null);
                           e.target.value = '';
-                        }
+                        };
+                        reader.onerror = () => {
+                          toast({
+                            title: "Error",
+                            description: "Failed to read file",
+                            variant: "destructive",
+                          });
+                          setUploadingLogo(null);
+                          e.target.value = '';
+                        };
+                        reader.readAsDataURL(file);
                       }}
                     />
                     {uploadingLogo === 'favicon' && <span className="text-sm text-muted-foreground">Uploading...</span>}
