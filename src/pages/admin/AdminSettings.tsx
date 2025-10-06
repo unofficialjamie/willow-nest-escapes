@@ -106,7 +106,11 @@ const AdminSettings = () => {
 
     toast({ title: "Success", description: "Settings saved successfully" });
     setLoading(false);
-    fetchSettings(); // Refresh to show updated data
+    
+    // Reload page to ensure all components see the updated logos
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   const handlePasswordChange = async () => {
