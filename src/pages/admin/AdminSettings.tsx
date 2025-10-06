@@ -15,6 +15,7 @@ const AdminSettings = () => {
   const { toast } = useToast();
 
   const [siteSettings, setSiteSettings] = useState({
+    site_name: "",
     header_logo: "",
     footer_logo: "",
     favicon: "",
@@ -50,6 +51,7 @@ const AdminSettings = () => {
       console.log("Fetched settings:", settings);
       
       setSiteSettings({
+        site_name: settings.site_name || "The Willow Nest Hotel",
         header_logo: settings.site_logo || settings.header_logo || "/logo-full.jpg",
         footer_logo: settings.footer_logo || settings.site_logo || "/logo-full.jpg",
         favicon: settings.site_favicon || settings.favicon || "/favicon.ico",
@@ -62,6 +64,11 @@ const AdminSettings = () => {
 
   const handleSaveSettings = async () => {
     setLoading(true);
+    
+    // Save site name
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'site_name', setting_value: siteSettings.site_name });
     
     // Save header logo as site_logo
     await supabase
@@ -182,6 +189,17 @@ const AdminSettings = () => {
                 <CardTitle>Site Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label>Site Name</Label>
+                  <Input
+                    type="text"
+                    placeholder="The Willow Nest Hotel"
+                    value={siteSettings.site_name}
+                    onChange={(e) => setSiteSettings({ ...siteSettings, site_name: e.target.value })}
+                  />
+                  <p className="text-sm text-muted-foreground">This name will be used across the website</p>
+                </div>
+
                 <div className="space-y-2">
                   <Label>Header Logo</Label>
                   {siteSettings.header_logo && (
