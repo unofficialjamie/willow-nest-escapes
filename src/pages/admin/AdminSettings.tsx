@@ -67,40 +67,42 @@ const AdminSettings = () => {
   const handleSaveSettings = async () => {
     setLoading(true);
     
-    // Save site name
+    // Update site name
     await supabase
       .from("site_settings")
-      .upsert({ setting_key: 'site_name', setting_value: siteSettings.site_name });
+      .update({ setting_value: siteSettings.site_name })
+      .eq('setting_key', 'site_name');
     
-    // Save header logo as site_logo
+    // Update header logo as site_logo
     await supabase
       .from("site_settings")
-      .upsert({ setting_key: 'site_logo', setting_value: siteSettings.header_logo });
+      .update({ setting_value: siteSettings.header_logo })
+      .eq('setting_key', 'site_logo');
 
-    // Save footer logo separately if different
-    if (siteSettings.footer_logo && siteSettings.footer_logo !== siteSettings.header_logo) {
-      await supabase
-        .from("site_settings")
-        .upsert({ setting_key: 'footer_logo', setting_value: siteSettings.footer_logo });
-    }
+    // Update footer logo
+    await supabase
+      .from("site_settings")
+      .update({ setting_value: siteSettings.footer_logo })
+      .eq('setting_key', 'footer_logo');
 
-    // Save favicon
+    // Update favicon
     await supabase
       .from("site_settings")
-      .upsert({ setting_key: 'site_favicon', setting_value: siteSettings.favicon });
+      .update({ setting_value: siteSettings.favicon })
+      .eq('setting_key', 'site_favicon');
 
-    // Save social media links
+    // Update social media links
     await supabase
       .from("site_settings")
-      .upsert({ setting_key: 'instagram_url', setting_value: siteSettings.instagram_url });
-    
-    await supabase
-      .from("site_settings")
-      .upsert({ setting_key: 'facebook_url', setting_value: siteSettings.facebook_url });
+      .upsert({ setting_key: 'instagram_url', setting_value: siteSettings.instagram_url }, { onConflict: 'setting_key' });
     
     await supabase
       .from("site_settings")
-      .upsert({ setting_key: 'linkedin_url', setting_value: siteSettings.linkedin_url });
+      .upsert({ setting_key: 'facebook_url', setting_value: siteSettings.facebook_url }, { onConflict: 'setting_key' });
+    
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'linkedin_url', setting_value: siteSettings.linkedin_url }, { onConflict: 'setting_key' });
 
     toast({ title: "Success", description: "Settings saved successfully" });
     setLoading(false);
