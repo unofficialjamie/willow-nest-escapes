@@ -44,9 +44,9 @@ const AdminSettings = () => {
         return acc;
       }, {} as any);
       setSiteSettings({
-        header_logo: settings.site_logo || "",
-        footer_logo: settings.site_logo || "",
-        favicon: settings.site_favicon || "",
+        header_logo: settings.site_logo || settings.header_logo || "",
+        footer_logo: settings.footer_logo || settings.site_logo || "",
+        favicon: settings.site_favicon || settings.favicon || "",
       });
     }
   };
@@ -161,6 +161,12 @@ const AdminSettings = () => {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label>Header Logo</Label>
+                  {siteSettings.header_logo && (
+                    <div className="mb-4 p-4 border rounded-lg bg-muted/20">
+                      <p className="text-sm text-muted-foreground mb-2">Current logo:</p>
+                      <img src={siteSettings.header_logo} alt="Header Logo" className="w-48 h-auto" />
+                    </div>
+                  )}
                   <Input
                     type="file"
                     accept="image/*"
@@ -169,7 +175,7 @@ const AdminSettings = () => {
                       if (!file) return;
                       
                       const fileExt = file.name.split('.').pop();
-                      const fileName = `header-logo.${fileExt}`;
+                      const fileName = `header-logo-${Date.now()}.${fileExt}`;
                       const filePath = `site/${fileName}`;
 
                       const { error: uploadError } = await supabase.storage
@@ -192,17 +198,20 @@ const AdminSettings = () => {
                       setSiteSettings({ ...siteSettings, header_logo: publicUrl });
                       toast({
                         title: "Success",
-                        description: "Logo uploaded successfully",
+                        description: "Logo uploaded successfully. Click 'Save Settings' to apply changes.",
                       });
                     }}
                   />
-                  {siteSettings.header_logo && (
-                    <img src={siteSettings.header_logo} alt="Header Logo" className="w-48 h-auto mt-2" />
-                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Footer Logo</Label>
+                  {siteSettings.footer_logo && (
+                    <div className="mb-4 p-4 border rounded-lg bg-muted/20">
+                      <p className="text-sm text-muted-foreground mb-2">Current logo:</p>
+                      <img src={siteSettings.footer_logo} alt="Footer Logo" className="w-48 h-auto" />
+                    </div>
+                  )}
                   <Input
                     type="file"
                     accept="image/*"
@@ -211,7 +220,7 @@ const AdminSettings = () => {
                       if (!file) return;
                       
                       const fileExt = file.name.split('.').pop();
-                      const fileName = `footer-logo.${fileExt}`;
+                      const fileName = `footer-logo-${Date.now()}.${fileExt}`;
                       const filePath = `site/${fileName}`;
 
                       const { error: uploadError } = await supabase.storage
@@ -234,17 +243,20 @@ const AdminSettings = () => {
                       setSiteSettings({ ...siteSettings, footer_logo: publicUrl });
                       toast({
                         title: "Success",
-                        description: "Logo uploaded successfully",
+                        description: "Logo uploaded successfully. Click 'Save Settings' to apply changes.",
                       });
                     }}
                   />
-                  {siteSettings.footer_logo && (
-                    <img src={siteSettings.footer_logo} alt="Footer Logo" className="w-48 h-auto mt-2" />
-                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Favicon</Label>
+                  {siteSettings.favicon && (
+                    <div className="mb-4 p-4 border rounded-lg bg-muted/20">
+                      <p className="text-sm text-muted-foreground mb-2">Current favicon:</p>
+                      <img src={siteSettings.favicon} alt="Favicon" className="w-8 h-8" />
+                    </div>
+                  )}
                   <Input
                     type="file"
                     accept="image/x-icon,image/png,image/svg+xml"
@@ -253,7 +265,7 @@ const AdminSettings = () => {
                       if (!file) return;
                       
                       const fileExt = file.name.split('.').pop();
-                      const fileName = `favicon.${fileExt}`;
+                      const fileName = `favicon-${Date.now()}.${fileExt}`;
                       const filePath = `site/${fileName}`;
 
                       const { error: uploadError } = await supabase.storage
@@ -276,13 +288,10 @@ const AdminSettings = () => {
                       setSiteSettings({ ...siteSettings, favicon: publicUrl });
                       toast({
                         title: "Success",
-                        description: "Favicon uploaded successfully",
+                        description: "Favicon uploaded successfully. Click 'Save Settings' to apply changes.",
                       });
                     }}
                   />
-                  {siteSettings.favicon && (
-                    <img src={siteSettings.favicon} alt="Favicon" className="w-8 h-8 mt-2" />
-                  )}
                 </div>
 
                 <Button onClick={handleSaveSettings} disabled={loading}>

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from "lucide-react";
-import logoFull from "@/assets/logo-full.jpg";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Footer = () => {
+  const { settings } = useSiteSettings();
+  
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container mx-auto px-4 py-12">
@@ -10,8 +12,8 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="space-y-4">
             <img 
-              src={logoFull} 
-              alt="The Willow Nest Hotel" 
+              src={settings.footer_logo} 
+              alt={settings.site_name} 
               className="h-12 w-auto"
             />
             <p className="text-sm text-secondary-foreground/80">

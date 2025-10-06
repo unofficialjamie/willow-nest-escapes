@@ -10,10 +10,11 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import logoFull from "@/assets/logo-full.jpg";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { settings } = useSiteSettings();
   const [isMobileLocationsOpen, setIsMobileLocationsOpen] = useState(false);
   const location = useLocation();
 
@@ -40,8 +41,8 @@ const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img 
-              src={logoFull} 
-              alt="The Willow Nest Hotel" 
+              src={settings.header_logo} 
+              alt={settings.site_name} 
               className="h-12 w-auto"
             />
           </Link>
