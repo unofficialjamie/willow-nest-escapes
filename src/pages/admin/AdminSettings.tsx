@@ -330,7 +330,7 @@ const AdminSettings = () => {
                   <div className="flex items-center gap-2">
                     <Input
                       type="file"
-                      accept="image/x-icon,image/png,image/svg+xml"
+                      accept="image/x-icon,image/png,image/svg+xml,image/jpeg,image/jpg,image/webp"
                       disabled={uploadingLogo === 'favicon'}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
