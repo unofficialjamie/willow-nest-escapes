@@ -52,7 +52,7 @@ const HomePage = () => {
       <div className="min-h-screen">
         {/* Hero Section */}
       <section 
-        className="relative h-screen flex items-center justify-center text-white hero-gradient"
+        className="relative min-h-[110vh] flex items-center justify-center text-white hero-gradient"
         style={{
           backgroundImage: `linear-gradient(rgba(30, 15, 15, 0.7), rgba(30, 15, 15, 0.5)), url(${heroData.image || ''})`,
           backgroundSize: 'cover',
