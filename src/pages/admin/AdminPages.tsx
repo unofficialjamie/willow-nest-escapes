@@ -613,8 +613,8 @@ const AdminPages = () => {
       // Skip rendering if value is null or undefined
       if (value === null || value === undefined) return null;
 
-      // Handle images
-      if (key === 'image' && typeof value === 'string' && (value.startsWith('http') || value.startsWith('/') || value.startsWith('data:'))) {
+      // Handle images - match any field ending with 'image' or containing 'image'
+      if ((key.includes('image') || key.includes('Image')) && typeof value === 'string' && (value.startsWith('http') || value.startsWith('/') || value.startsWith('data:'))) {
         return (
           <div key={currentPath} className="mb-6">
             <Label className="text-xs font-semibold mb-3 block capitalize">{key.replace(/_/g, ' ')}</Label>
