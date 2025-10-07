@@ -99,7 +99,7 @@ const SeedData = () => {
         
         // Contact Page
         { page_name: "contact", section_key: "hero", section_title: "Hero Section", content_type: "hero", display_order: 1, is_active: true, data: { title: "Contact Us", description: "Get in touch with us for reservations, inquiries, or any assistance you may need", image: "/assets/hero-luxury-hotel.jpg" }},
-        { page_name: "contact", section_key: "locations", section_title: "Contact Locations", content_type: "locations", display_order: 2, is_active: true, data: { items: [
+        { page_name: "contact", section_key: "locations", section_title: "Contact Locations", content_type: "locations", display_order: 2, is_active: true, data: { locations: [
           { name: "Ibadan - Oyo State", address: "Plot A, Osunjela Street, Off Adeoyo Street, Old Bodija, Ibadan, Oyo State", phone: "+234 802 266 6235", email: "reservations.ib@thewillowshotels.com" },
           { name: "Abuja - Federal Capital Territory", address: "34 Ubiqja Crescent off Ladoke Akintola Boulevard, Garki II, FCT", phone: "+234 (0) 813 111 1808", email: "reservations.abj@thewillowshotels.com" },
           { name: "Ogbomosho - Oyo State", address: "1 Diji Ogbomosho-Ilorin Road, Ogbomosho, Oyo State", phone: "+234 (0) 8763373", email: "reservations.ogb@thewillowshotels.com" }

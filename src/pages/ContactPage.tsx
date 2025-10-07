@@ -179,7 +179,7 @@ const ContactPage = () => {
           {/* Contact Information */}
           <div className="space-y-6">
             {/* Contact Cards */}
-            {locationsData.items?.map((location: any, index: number) => (
+            {(locationsData.items || locationsData.locations)?.map((location: any, index: number) => (
               <Card key={index} className="card-luxury">
                 <CardContent className="p-6">
                   <h3 className="font-heading text-xl font-semibold mb-4 text-primary">
