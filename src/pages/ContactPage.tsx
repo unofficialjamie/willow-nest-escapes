@@ -8,6 +8,7 @@ import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from "lucide-react
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { usePageSections } from "@/hooks/usePageSections";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -18,23 +19,50 @@ const ContactPage = () => {
     subject: "",
     message: ""
   });
+  const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
   const { sections, loading, getSectionData } = usePageSections('contact');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We'll get back to you soon.",
-    });
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      location: "",
-      subject: "",
-      message: ""
-    });
+    setSubmitting(true);
+
+    try {
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: formData,
+      });
+
+      if (error) {
+        console.error("Contact form error:", error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to send message. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Message Sent!",
+          description: "Thank you for contacting us. We'll get back to you soon.",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          location: "",
+          subject: "",
+          message: ""
+        });
+      }
+    } catch (err: any) {
+      console.error("Contact form error:", err);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -140,8 +168,8 @@ const ContactPage = () => {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full btn-luxury">
-                    Send Message
+                  <Button type="submit" className="w-full btn-luxury" disabled={submitting}>
+                    {submitting ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               </CardContent>

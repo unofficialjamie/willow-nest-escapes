@@ -22,7 +22,12 @@ const AdminSettings = () => {
     instagram_url: "",
     facebook_url: "",
     linkedin_url: "",
+    contact_email: "",
+    contact_from_name: "",
   });
+
+  const [testEmail, setTestEmail] = useState("");
+  const [testingEmail, setTestingEmail] = useState(false);
 
   const [uploadingLogo, setUploadingLogo] = useState<'header' | 'footer' | 'favicon' | null>(null);
 
@@ -60,6 +65,8 @@ const AdminSettings = () => {
         instagram_url: settings.instagram_url || "",
         facebook_url: settings.facebook_url || "",
         linkedin_url: settings.linkedin_url || "",
+        contact_email: settings.contact_email || "",
+        contact_from_name: settings.contact_from_name || "",
       });
     }
   };
@@ -103,6 +110,15 @@ const AdminSettings = () => {
     await supabase
       .from("site_settings")
       .upsert({ setting_key: 'linkedin_url', setting_value: siteSettings.linkedin_url }, { onConflict: 'setting_key' });
+
+    // Update contact email settings
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'contact_email', setting_value: siteSettings.contact_email }, { onConflict: 'setting_key' });
+    
+    await supabase
+      .from("site_settings")
+      .upsert({ setting_key: 'contact_from_name', setting_value: siteSettings.contact_from_name }, { onConflict: 'setting_key' });
 
     toast({ title: "Success", description: "Settings saved successfully" });
     setLoading(false);
@@ -173,6 +189,54 @@ const AdminSettings = () => {
     setEmailData({ newEmail: "" });
   };
 
+  const handleTestEmail = async () => {
+    if (!testEmail) {
+      toast({
+        title: "Error",
+        description: "Please enter an email address to test",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setTestingEmail(true);
+    try {
+      const { error } = await supabase.functions.invoke("send-contact-email", {
+        body: {
+          name: "Test User",
+          email: testEmail,
+          subject: "SMTP Configuration Test",
+          message: "This is a test email from your SMTP configuration.",
+          testEmail: testEmail,
+        },
+      });
+
+      if (error) {
+        console.error("Test email error:", error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to send test email",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Test email sent successfully! Check your inbox.",
+        });
+        setTestEmail("");
+      }
+    } catch (err: any) {
+      console.error("Test email error:", err);
+      toast({
+        title: "Error",
+        description: err.message || "Failed to send test email",
+        variant: "destructive",
+      });
+    } finally {
+      setTestingEmail(false);
+    }
+  };
+
   if (authLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -188,8 +252,9 @@ const AdminSettings = () => {
 
       <main>
         <Tabs defaultValue="site" className="max-w-4xl">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="site">Site Settings</TabsTrigger>
+            <TabsTrigger value="email">Email/SMTP</TabsTrigger>
             <TabsTrigger value="account">Account</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
           </TabsList>
@@ -406,6 +471,79 @@ const AdminSettings = () => {
                 <Button onClick={handleSaveSettings} disabled={loading}>
                   <Save className="h-4 w-4 mr-2" />
                   Save Settings
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="email">
+            <Card>
+              <CardHeader>
+                <CardTitle>SMTP Configuration</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                  <p className="text-sm font-medium">SMTP Server Settings</p>
+                  <p className="text-sm text-muted-foreground">
+                    SMTP credentials are securely stored. Configure them once and they'll be used for all contact form submissions.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    You need to configure: SMTP_HOST, SMTP_PORT, SMTP_USERNAME, and SMTP_PASSWORD in the backend settings.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Contact Email Recipient</Label>
+                    <Input
+                      type="email"
+                      placeholder="contact@yourhotel.com"
+                      value={siteSettings.contact_email}
+                      onChange={(e) => setSiteSettings({ ...siteSettings, contact_email: e.target.value })}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Email address where contact form submissions will be sent
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>From Name</Label>
+                    <Input
+                      type="text"
+                      placeholder="Hotel Contact Form"
+                      value={siteSettings.contact_from_name}
+                      onChange={(e) => setSiteSettings({ ...siteSettings, contact_from_name: e.target.value })}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Name that will appear in the "From" field of emails
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t pt-6 mt-6">
+                  <h3 className="text-lg font-semibold mb-4">Test SMTP Configuration</h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Test Email Address</Label>
+                      <Input
+                        type="email"
+                        placeholder="test@example.com"
+                        value={testEmail}
+                        onChange={(e) => setTestEmail(e.target.value)}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        Enter an email address to receive a test email
+                      </p>
+                    </div>
+                    <Button onClick={handleTestEmail} disabled={testingEmail || !testEmail}>
+                      {testingEmail ? "Sending..." : "Send Test Email"}
+                    </Button>
+                  </div>
+                </div>
+
+                <Button onClick={handleSaveSettings} disabled={loading}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Email Settings
                 </Button>
               </CardContent>
             </Card>
