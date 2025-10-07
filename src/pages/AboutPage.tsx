@@ -39,36 +39,57 @@ const AboutPage = () => {
       {/* Who We Are */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-8 text-center">{whoWeAreData.title}</h2>
-            <Card className="card-luxury">
-              <CardContent className="p-8">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-12 text-center">{whoWeAreData.title}</h2>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="relative h-[400px] rounded-lg overflow-hidden">
+                <img 
+                  src={whoWeAreData.image || '/assets/hero-luxury-hotel.jpg'} 
+                  alt="About Us"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
                 <p className="text-lg leading-relaxed text-muted-foreground">
                   {whoWeAreData.content}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Vision & Mission */}
       <section className="py-16 bg-luxury-cream">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <Card className="card-luxury">
-              <CardContent className="p-8">
-                <h3 className="font-heading text-2xl font-bold mb-4 text-primary">{visionMissionData.vision_title}</h3>
-                <p className="text-lg leading-relaxed text-muted-foreground">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="card-luxury overflow-hidden group hover:shadow-xl transition-shadow">
+              <div className="relative h-48 overflow-hidden">
+                <img 
+                  src={visionMissionData.vision_image || '/assets/facility-rooftop.jpg'} 
+                  alt="Our Vision"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <CardContent className="p-6">
+                <h3 className="font-heading text-xl font-bold mb-3 text-primary">{visionMissionData.vision_title}</h3>
+                <p className="text-base leading-relaxed text-muted-foreground">
                   {visionMissionData.vision}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="card-luxury">
-              <CardContent className="p-8">
-                <h3 className="font-heading text-2xl font-bold mb-4 text-primary">{visionMissionData.mission_title}</h3>
-                <p className="text-lg leading-relaxed text-muted-foreground">
+            <Card className="card-luxury overflow-hidden group hover:shadow-xl transition-shadow">
+              <div className="relative h-48 overflow-hidden">
+                <img 
+                  src={visionMissionData.mission_image || '/assets/facility-conference.jpg'} 
+                  alt="Our Mission"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <CardContent className="p-6">
+                <h3 className="font-heading text-xl font-bold mb-3 text-primary">{visionMissionData.mission_title}</h3>
+                <p className="text-base leading-relaxed text-muted-foreground">
                   {visionMissionData.mission}
                 </p>
               </CardContent>
@@ -78,16 +99,16 @@ const AboutPage = () => {
       </section>
 
       {/* Core Values */}
-      <section className="py-16 bg-background">
+      <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">{valuesData.title}</h2>
-            <p className="text-lg text-muted-foreground">
+          <div className="text-center mb-8">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-3">{valuesData.title}</h2>
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
               {valuesData.description}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
             {valuesData.items?.map((value: any, index: number) => (
               <AmenityCard
                 key={index}
@@ -101,12 +122,12 @@ const AboutPage = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-secondary text-secondary-foreground">
+      <section className="py-12 bg-secondary text-secondary-foreground">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-heading text-3xl font-bold mb-4">
+          <h2 className="font-heading text-2xl md:text-3xl font-bold mb-3">
             {ctaData.title}
           </h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-base max-w-2xl mx-auto">
             {ctaData.description}
           </p>
         </div>
