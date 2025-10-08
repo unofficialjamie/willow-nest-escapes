@@ -69,9 +69,11 @@ const HomePage = () => {
               <Button size="lg" variant="luxury" className="text-lg px-8 py-6">
                 {heroData.cta_primary}
               </Button>
-              <Button variant="outline-luxury" size="lg" className="text-lg px-8 py-6">
-                {heroData.cta_secondary}
-              </Button>
+              <Link to="/locations">
+                <Button variant="outline-luxury" size="lg" className="text-lg px-8 py-6">
+                  {heroData.cta_secondary}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

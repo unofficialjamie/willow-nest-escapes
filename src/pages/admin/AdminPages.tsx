@@ -613,12 +613,25 @@ const AdminPages = () => {
       // Skip rendering if value is null or undefined
       if (value === null || value === undefined) return null;
 
+      // Handle hero background (image or video)
+      if (key.includes('hero') && (key.includes('image') || key.includes('background') || key.includes('media'))) {
+        return (
+          <div key={currentPath} className="mb-6">
+            <Label className="text-xs font-semibold mb-3 block capitalize">{key.replace(/_/g, ' ')}</Label>
+            {renderEditableImage(sectionId, currentPath, value, true)}
+            <p className="text-xs text-muted-foreground mt-2">
+              Tip: Upload an image or paste a video URL (YouTube, Vimeo, or direct .mp4 link)
+            </p>
+          </div>
+        );
+      }
+
       // Handle images - match any field ending with 'image' or containing 'image'
       if ((key.includes('image') || key.includes('Image')) && typeof value === 'string' && (value.startsWith('http') || value.startsWith('/') || value.startsWith('data:'))) {
         return (
           <div key={currentPath} className="mb-6">
             <Label className="text-xs font-semibold mb-3 block capitalize">{key.replace(/_/g, ' ')}</Label>
-            {renderEditableImage(sectionId, currentPath, value, key.includes('hero'))}
+            {renderEditableImage(sectionId, currentPath, value, false)}
           </div>
         );
       }
