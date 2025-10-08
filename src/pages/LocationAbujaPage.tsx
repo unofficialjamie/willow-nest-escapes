@@ -45,7 +45,8 @@ const LocationAbujaPage = () => {
       .select("*")
       .eq("location", "abuja")
       .eq("is_active", true)
-      .order("display_order", { ascending: true });
+      .order("display_order", { ascending: true })
+      .limit(8);
 
     if (!error && data) {
       const roomsWithImages = data.map(room => {
