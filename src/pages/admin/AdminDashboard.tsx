@@ -16,23 +16,23 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       // Fetch room count
-      const { data: rooms, error: roomError } = await supabase
+      const { count: roomCount, error: roomError } = await supabase
         .from("rooms")
-        .select("id", { count: "exact", head: true })
+        .select("*", { count: "exact", head: true })
         .eq("is_active", true);
 
-      if (!roomError) {
-        setRoomCount(rooms?.length || 0);
+      if (!roomError && roomCount !== null) {
+        setRoomCount(roomCount);
       }
 
       // Fetch page sections count
-      const { data: sections, error: sectionError } = await supabase
+      const { count: sectionCount, error: sectionError } = await supabase
         .from("page_sections")
-        .select("id", { count: "exact", head: true })
+        .select("*", { count: "exact", head: true })
         .eq("is_active", true);
 
-      if (!sectionError) {
-        setSectionCount(sections?.length || 0);
+      if (!sectionError && sectionCount !== null) {
+        setSectionCount(sectionCount);
       }
     } catch (error) {
       console.error("Error fetching stats:", error);
