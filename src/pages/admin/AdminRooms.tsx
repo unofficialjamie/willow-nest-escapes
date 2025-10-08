@@ -175,10 +175,18 @@ const AdminRooms = () => {
 
   const openEditDialog = (room: Room) => {
     setEditingRoom(room);
+    
+    // Get the actual image URL - map asset paths to imported images
+    let displayImageUrl = room.image_url || "";
+    if (displayImageUrl.startsWith('/assets/rooms/')) {
+      const imageKey = displayImageUrl.split('/').pop()?.replace('.jpg', '') || '';
+      displayImageUrl = roomImageMap[imageKey] || displayImageUrl;
+    }
+    
     setFormData({
       location: room.location,
       name: room.name,
-      image_url: room.image_url || "",
+      image_url: displayImageUrl,
       size: room.size || "",
       occupancy: room.occupancy || "",
       description: room.description || "",
