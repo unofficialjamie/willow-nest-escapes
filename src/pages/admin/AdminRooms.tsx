@@ -80,6 +80,7 @@ const AdminRooms = () => {
     display_order: 0,
     is_active: true,
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchRooms();
@@ -277,46 +278,76 @@ const AdminRooms = () => {
 
                 <div>
                   <Label>Image Upload</Label>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      
-                      const fileExt = file.name.split('.').pop();
-                      const fileName = `${Date.now()}.${fileExt}`;
-                      const filePath = `rooms/${formData.location}/${fileName}`;
+                  <div className="space-y-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingImage}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        setUploadingImage(true);
+                        
+                        try {
+                          const fileExt = file.name.split('.').pop();
+                          const fileName = `${Date.now()}.${fileExt}`;
+                          const filePath = `rooms/${formData.location}/${fileName}`;
 
-                      const { error: uploadError } = await supabase.storage
-                        .from('website-images')
-                        .upload(filePath, file);
+                          const { error: uploadError } = await supabase.storage
+                            .from('website-images')
+                            .upload(filePath, file, {
+                              cacheControl: '3600',
+                              upsert: false
+                            });
 
-                      if (uploadError) {
-                        toast({
-                          title: "Error",
-                          description: "Failed to upload image",
-                          variant: "destructive",
-                        });
-                        return;
-                      }
+                          if (uploadError) {
+                            console.error('Upload error:', uploadError);
+                            toast({
+                              title: "Error",
+                              description: uploadError.message || "Failed to upload image",
+                              variant: "destructive",
+                            });
+                            return;
+                          }
 
-                      const { data: { publicUrl } } = supabase.storage
-                        .from('website-images')
-                        .getPublicUrl(filePath);
+                          const { data: { publicUrl } } = supabase.storage
+                            .from('website-images')
+                            .getPublicUrl(filePath);
 
-                      setFormData({ ...formData, image_url: publicUrl });
-                      toast({
-                        title: "Success",
-                        description: "Image uploaded successfully",
-                      });
-                    }}
-                  />
-                  {formData.image_url && (
-                    <div className="mt-2">
-                      <img src={formData.image_url} alt="Preview" className="w-32 h-32 object-cover rounded" />
-                    </div>
-                  )}
+                          setFormData({ ...formData, image_url: publicUrl });
+                          toast({
+                            title: "Success",
+                            description: "Image uploaded successfully",
+                          });
+                        } catch (error: any) {
+                          console.error('Upload error:', error);
+                          toast({
+                            title: "Error",
+                            description: error.message || "Failed to upload image",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setUploadingImage(false);
+                        }
+                      }}
+                    />
+                    {uploadingImage && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                        Uploading image...
+                      </div>
+                    )}
+                    {formData.image_url && !uploadingImage && (
+                      <div className="mt-2">
+                        <img 
+                          src={formData.image_url} 
+                          alt="Preview" 
+                          className="w-full max-w-sm h-48 object-cover rounded border" 
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -389,8 +420,8 @@ const AdminRooms = () => {
                   <Label htmlFor="is_active">Active</Label>
                 </div>
 
-                <Button type="submit" className="w-full">
-                  {editingRoom ? "Update Room" : "Create Room"}
+                <Button type="submit" className="w-full" disabled={uploadingImage}>
+                  {uploadingImage ? "Uploading..." : editingRoom ? "Update Room" : "Create Room"}
                 </Button>
               </form>
             </DialogContent>
