@@ -1,8 +1,46 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { FileText, Hotel, Image, Settings, TrendingUp, Users, Eye } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminDashboard = () => {
+  const [roomCount, setRoomCount] = useState(0);
+  const [sectionCount, setSectionCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      // Fetch room count
+      const { data: rooms, error: roomError } = await supabase
+        .from("rooms")
+        .select("id", { count: "exact", head: true })
+        .eq("is_active", true);
+
+      if (!roomError) {
+        setRoomCount(rooms?.length || 0);
+      }
+
+      // Fetch page sections count
+      const { data: sections, error: sectionError } = await supabase
+        .from("page_sections")
+        .select("id", { count: "exact", head: true })
+        .eq("is_active", true);
+
+      if (!sectionError) {
+        setSectionCount(sections?.length || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const menuItems = [
     {
       title: "Pages Management",
@@ -39,9 +77,9 @@ const AdminDashboard = () => {
   ];
 
   const stats = [
-    { label: "Total Pages", value: "11", icon: FileText, change: "+0%" },
-    { label: "Active Rooms", value: "8", icon: Hotel, change: "+2" },
-    { label: "Content Items", value: "45+", icon: Image, change: "+12" },
+    { label: "Total Pages", value: "11", icon: FileText },
+    { label: "Active Rooms", value: loading ? "..." : roomCount.toString(), icon: Hotel },
+    { label: "Content Sections", value: loading ? "..." : sectionCount.toString(), icon: Image },
   ];
 
   return (
@@ -66,9 +104,11 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {stat.change} from last update
-              </p>
+              {stat.label === "Active Rooms" && !loading && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Across all locations
+                </p>
+              )}
             </CardContent>
           </Card>
         ))}
