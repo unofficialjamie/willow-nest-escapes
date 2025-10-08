@@ -613,6 +613,19 @@ const AdminPages = () => {
       // Skip rendering if value is null or undefined
       if (value === null || value === undefined) return null;
 
+      // Handle video URL for hero sections
+      if (key === 'video_url' && typeof value === 'string') {
+        return (
+          <div key={currentPath} className="mb-6">
+            <Label className="text-xs font-semibold mb-3 block">Hero Video URL (YouTube, Vimeo, or direct .mp4)</Label>
+            {renderEditableText(sectionId, currentPath, value || '')}
+            <p className="text-xs text-muted-foreground mt-2">
+              Leave empty to use the background image instead. Paste a YouTube/Vimeo URL or direct video file link.
+            </p>
+          </div>
+        );
+      }
+
       // Handle hero background (image or video)
       if (key.includes('hero') && (key.includes('image') || key.includes('background') || key.includes('media'))) {
         return (
@@ -620,7 +633,7 @@ const AdminPages = () => {
             <Label className="text-xs font-semibold mb-3 block capitalize">{key.replace(/_/g, ' ')}</Label>
             {renderEditableImage(sectionId, currentPath, value, true)}
             <p className="text-xs text-muted-foreground mt-2">
-              Tip: Upload an image or paste a video URL (YouTube, Vimeo, or direct .mp4 link)
+              This image will be used as background when no video URL is provided
             </p>
           </div>
         );
