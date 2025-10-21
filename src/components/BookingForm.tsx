@@ -39,8 +39,44 @@ const BookingForm = ({
       script.id = 'propInfo';
       script.async = true;
       
+      // Add custom styles to keep date pickers within viewport
+      const style = document.createElement('style');
+      style.innerHTML = `
+        /* Ensure date picker dropdowns stay within viewport */
+        .Configure-quickBook-Widget * {
+          max-width: 100vw !important;
+        }
+        
+        .Configure-quickBook-Widget [class*="calendar"],
+        .Configure-quickBook-Widget [class*="date-picker"],
+        .Configure-quickBook-Widget [class*="dropdown"],
+        .Configure-quickBook-Widget [class*="popup"],
+        .Configure-quickBook-Widget [class*="popover"] {
+          position: fixed !important;
+          max-width: calc(100vw - 2rem) !important;
+          max-height: calc(100vh - 2rem) !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          z-index: 9999 !important;
+          overflow: auto !important;
+        }
+        
+        @media (min-width: 768px) {
+          .Configure-quickBook-Widget [class*="calendar"],
+          .Configure-quickBook-Widget [class*="date-picker"],
+          .Configure-quickBook-Widget [class*="dropdown"],
+          .Configure-quickBook-Widget [class*="popup"],
+          .Configure-quickBook-Widget [class*="popover"] {
+            position: absolute !important;
+            left: auto !important;
+            transform: none !important;
+          }
+        }
+      `;
+      
       // Clear existing content and append new elements
       widgetRef.current.innerHTML = '';
+      widgetRef.current.appendChild(style);
       widgetRef.current.appendChild(widgetDiv);
       widgetRef.current.appendChild(script);
       
