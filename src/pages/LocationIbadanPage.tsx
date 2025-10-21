@@ -177,7 +177,7 @@ const LocationIbadanPage = () => {
           </div>
           
           <div className="container mx-auto px-4 pb-8">
-            <div ref={widgetRef} className="min-h-[100px]"></div>
+            <div ref={widgetRef} className="min-h-[100px] max-w-[800px] mx-auto hidden md:block"></div>
           </div>
         </section>
 
