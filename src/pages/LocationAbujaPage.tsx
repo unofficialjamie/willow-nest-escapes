@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import BookingForm from "@/components/BookingForm";
 import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Phone, Mail } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { usePageSections } from "@/hooks/usePageSections";
@@ -34,9 +33,67 @@ const LocationAbujaPage = () => {
   const { sections, loading, getSectionData } = usePageSections("location-abuja");
   const [rooms, setRooms] = useState<any[]>([]);
   const [roomsLoading, setRoomsLoading] = useState(true);
+  const widgetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchRooms();
+  }, []);
+
+  useEffect(() => {
+    if (widgetRef.current) {
+      const widgetDiv = document.createElement('div');
+      widgetDiv.id = 'quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
+      widgetDiv.className = 'Configure-quickBook-Widget';
+      
+      const script = document.createElement('script');
+      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
+      script.id = 'propInfo';
+      script.async = true;
+      
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .Configure-quickBook-Widget * {
+          max-width: 100vw !important;
+        }
+        
+        .Configure-quickBook-Widget [class*="calendar"],
+        .Configure-quickBook-Widget [class*="date-picker"],
+        .Configure-quickBook-Widget [class*="dropdown"],
+        .Configure-quickBook-Widget [class*="popup"],
+        .Configure-quickBook-Widget [class*="popover"] {
+          position: fixed !important;
+          max-width: calc(100vw - 2rem) !important;
+          max-height: calc(100vh - 2rem) !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          z-index: 9999 !important;
+          overflow: auto !important;
+        }
+        
+        @media (min-width: 768px) {
+          .Configure-quickBook-Widget [class*="calendar"],
+          .Configure-quickBook-Widget [class*="date-picker"],
+          .Configure-quickBook-Widget [class*="dropdown"],
+          .Configure-quickBook-Widget [class*="popup"],
+          .Configure-quickBook-Widget [class*="popover"] {
+            position: absolute !important;
+            left: auto !important;
+            transform: none !important;
+          }
+        }
+      `;
+      
+      widgetRef.current.innerHTML = '';
+      widgetRef.current.appendChild(style);
+      widgetRef.current.appendChild(widgetDiv);
+      widgetRef.current.appendChild(script);
+      
+      return () => {
+        if (widgetRef.current) {
+          widgetRef.current.innerHTML = '';
+        }
+      };
+    }
   }, []);
 
   const fetchRooms = async () => {
@@ -78,31 +135,29 @@ const LocationAbujaPage = () => {
       <div className="min-h-screen">
         {/* Hero Section */}
         <section 
-          className="relative h-screen flex items-center text-white"
+          className="relative h-screen flex flex-col justify-between text-white"
           style={{
             backgroundImage: `linear-gradient(rgba(30, 15, 15, 0.7), rgba(30, 15, 15, 0.5)), url(${heroData.image})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         >
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between">
-              <div className="max-w-2xl space-y-6">
-                <h1 className="font-heading text-5xl md:text-6xl font-bold leading-tight">
-                  {heroData.title}
-                </h1>
-                <p className="text-xl text-white/90 leading-relaxed">
-                  {heroData.description}
-                </p>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-md font-semibold">
-                  {heroData.ctaText}
-                </Button>
-              </div>
-              
-              <div className="w-full max-w-md ml-auto">
-                <BookingForm variant="hero" preselectedLocation="abuja" showLocationSelector={false} />
-              </div>
+          <div className="container mx-auto px-4 flex-1 flex items-center">
+            <div className="max-w-2xl space-y-6">
+              <h1 className="font-heading text-5xl md:text-6xl font-bold leading-tight">
+                {heroData.title}
+              </h1>
+              <p className="text-xl text-white/90 leading-relaxed">
+                {heroData.description}
+              </p>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-md font-semibold">
+                {heroData.ctaText}
+              </Button>
             </div>
+          </div>
+          
+          <div className="container mx-auto px-4 pb-8">
+            <div ref={widgetRef} className="min-h-[100px]"></div>
           </div>
         </section>
 

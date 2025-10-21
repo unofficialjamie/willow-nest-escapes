@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import BookingForm from "@/components/BookingForm";
 import { MapPin, Wifi, Car, Coffee, Waves, Dumbbell, Shield, Users, Utensils, Phone, Mail, TreePine } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { usePageSections } from "@/hooks/usePageSections";
@@ -34,9 +33,67 @@ const LocationOgbomoshoPage = () => {
   const { sections, loading, getSectionData } = usePageSections("location-ogbomosho");
   const [rooms, setRooms] = useState<any[]>([]);
   const [roomsLoading, setRoomsLoading] = useState(true);
+  const widgetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchRooms();
+  }, []);
+
+  useEffect(() => {
+    if (widgetRef.current) {
+      const widgetDiv = document.createElement('div');
+      widgetDiv.id = 'quickbook-widget-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
+      widgetDiv.className = 'Configure-quickBook-Widget';
+      
+      const script = document.createElement('script');
+      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
+      script.id = 'propInfo';
+      script.async = true;
+      
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .Configure-quickBook-Widget * {
+          max-width: 100vw !important;
+        }
+        
+        .Configure-quickBook-Widget [class*="calendar"],
+        .Configure-quickBook-Widget [class*="date-picker"],
+        .Configure-quickBook-Widget [class*="dropdown"],
+        .Configure-quickBook-Widget [class*="popup"],
+        .Configure-quickBook-Widget [class*="popover"] {
+          position: fixed !important;
+          max-width: calc(100vw - 2rem) !important;
+          max-height: calc(100vh - 2rem) !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          z-index: 9999 !important;
+          overflow: auto !important;
+        }
+        
+        @media (min-width: 768px) {
+          .Configure-quickBook-Widget [class*="calendar"],
+          .Configure-quickBook-Widget [class*="date-picker"],
+          .Configure-quickBook-Widget [class*="dropdown"],
+          .Configure-quickBook-Widget [class*="popup"],
+          .Configure-quickBook-Widget [class*="popover"] {
+            position: absolute !important;
+            left: auto !important;
+            transform: none !important;
+          }
+        }
+      `;
+      
+      widgetRef.current.innerHTML = '';
+      widgetRef.current.appendChild(style);
+      widgetRef.current.appendChild(widgetDiv);
+      widgetRef.current.appendChild(script);
+      
+      return () => {
+        if (widgetRef.current) {
+          widgetRef.current.innerHTML = '';
+        }
+      };
+    }
   }, []);
 
   const fetchRooms = async () => {
@@ -78,36 +135,34 @@ const LocationOgbomoshoPage = () => {
       <div className="min-h-screen">
         {/* Hero Section */}
         <section 
-          className="relative h-screen flex items-center text-white"
+          className="relative h-screen flex flex-col justify-between text-white"
           style={{
             backgroundImage: `linear-gradient(rgba(30, 15, 15, 0.7), rgba(30, 15, 15, 0.5)), url(${heroData.image})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         >
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between">
-              <div className="max-w-2xl space-y-6">
-                <h1 className="font-heading text-5xl md:text-6xl font-bold leading-tight">
-                  {heroData.title}
-                </h1>
-                {heroData.subtitle && (
-                  <h2 className="font-heading text-2xl text-white/90 font-semibold">
-                    {heroData.subtitle}
-                  </h2>
-                )}
-                <p className="text-lg text-white/80 leading-relaxed">
-                  {heroData.description}
-                </p>
-                <Button className="bg-white hover:bg-white/90 text-black px-6 py-3 rounded-md font-semibold">
-                  {heroData.ctaText}
-                </Button>
-              </div>
-              
-              <div className="absolute top-4 right-4 w-80 hidden lg:block">
-                <BookingForm variant="hero" preselectedLocation="ogbomosho" showLocationSelector={false} />
-              </div>
+          <div className="container mx-auto px-4 flex-1 flex items-center">
+            <div className="max-w-2xl space-y-6">
+              <h1 className="font-heading text-5xl md:text-6xl font-bold leading-tight">
+                {heroData.title}
+              </h1>
+              {heroData.subtitle && (
+                <h2 className="font-heading text-2xl text-white/90 font-semibold">
+                  {heroData.subtitle}
+                </h2>
+              )}
+              <p className="text-lg text-white/80 leading-relaxed">
+                {heroData.description}
+              </p>
+              <Button className="bg-white hover:bg-white/90 text-black px-6 py-3 rounded-md font-semibold">
+                {heroData.ctaText}
+              </Button>
             </div>
+          </div>
+          
+          <div className="container mx-auto px-4 pb-8">
+            <div ref={widgetRef} className="min-h-[100px]"></div>
           </div>
         </section>
 
