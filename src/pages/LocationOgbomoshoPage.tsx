@@ -41,11 +41,9 @@ const LocationOgbomoshoPage = () => {
 
   useEffect(() => {
     if (widgetRef.current) {
-      const widgetDiv = document.createElement('div');
-      widgetDiv.id = 'quickbook-widget-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
-      widgetDiv.className = 'Configure-quickBook-Widget';
-      
+      // Add styles to head
       const style = document.createElement('style');
+      style.id = 'quickbook-widget-styles-ogb';
       style.innerHTML = `
         .Configure-quickBook-Widget * {
           max-width: 100vw !important;
@@ -77,28 +75,30 @@ const LocationOgbomoshoPage = () => {
           }
         }
       `;
-      
-      widgetRef.current.innerHTML = '';
       document.head.appendChild(style);
-      widgetRef.current.appendChild(widgetDiv);
-      
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      script.id = 'propInfo';
-      script.onload = () => console.log('Ogbomosho widget script loaded');
-      script.onerror = () => console.error('Failed to load Ogbomosho widget script');
-      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
-      document.body.appendChild(script);
+
+      // Insert widget HTML directly
+      widgetRef.current.innerHTML = `
+        <div id="quickbook-widget-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=" class="Configure-quickBook-Widget"></div>
+        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=" id="propInfo"></script>
+      `;
+
+      // Execute the script manually
+      const scripts = widgetRef.current.getElementsByTagName('script');
+      for (let script of scripts) {
+        const newScript = document.createElement('script');
+        newScript.src = script.src;
+        newScript.id = script.id;
+        newScript.async = true;
+        document.body.appendChild(newScript);
+      }
       
       return () => {
-        if (widgetRef.current) {
-          widgetRef.current.innerHTML = '';
-        }
+        const existingStyle = document.getElementById('quickbook-widget-styles-ogb');
+        if (existingStyle) existingStyle.remove();
+        
         const existingScript = document.getElementById('propInfo');
-        if (existingScript) {
-          existingScript.remove();
-        }
+        if (existingScript) existingScript.remove();
       };
     }
   }, []);

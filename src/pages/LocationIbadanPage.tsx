@@ -41,11 +41,9 @@ const LocationIbadanPage = () => {
 
   useEffect(() => {
     if (widgetRef.current) {
-      const widgetDiv = document.createElement('div');
-      widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
-      widgetDiv.className = 'Configure-quickBook-Widget';
-      
+      // Add styles to head
       const style = document.createElement('style');
+      style.id = 'quickbook-widget-styles-ibadan';
       style.innerHTML = `
         .Configure-quickBook-Widget * {
           max-width: 100vw !important;
@@ -77,28 +75,30 @@ const LocationIbadanPage = () => {
           }
         }
       `;
-      
-      widgetRef.current.innerHTML = '';
       document.head.appendChild(style);
-      widgetRef.current.appendChild(widgetDiv);
-      
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      script.id = 'propInfo';
-      script.onload = () => console.log('Ibadan widget script loaded');
-      script.onerror = () => console.error('Failed to load Ibadan widget script');
-      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
-      document.body.appendChild(script);
+
+      // Insert widget HTML directly
+      widgetRef.current.innerHTML = `
+        <div id="quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=" class="Configure-quickBook-Widget"></div>
+        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=" id="propInfo"></script>
+      `;
+
+      // Execute the script manually
+      const scripts = widgetRef.current.getElementsByTagName('script');
+      for (let script of scripts) {
+        const newScript = document.createElement('script');
+        newScript.src = script.src;
+        newScript.id = script.id;
+        newScript.async = true;
+        document.body.appendChild(newScript);
+      }
       
       return () => {
-        if (widgetRef.current) {
-          widgetRef.current.innerHTML = '';
-        }
+        const existingStyle = document.getElementById('quickbook-widget-styles-ibadan');
+        if (existingStyle) existingStyle.remove();
+        
         const existingScript = document.getElementById('propInfo');
-        if (existingScript) {
-          existingScript.remove();
-        }
+        if (existingScript) existingScript.remove();
       };
     }
   }, []);

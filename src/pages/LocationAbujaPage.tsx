@@ -41,11 +41,9 @@ const LocationAbujaPage = () => {
 
   useEffect(() => {
     if (widgetRef.current) {
-      const widgetDiv = document.createElement('div');
-      widgetDiv.id = 'quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
-      widgetDiv.className = 'Configure-quickBook-Widget';
-      
+      // Add styles to head
       const style = document.createElement('style');
+      style.id = 'quickbook-widget-styles-abuja';
       style.innerHTML = `
         .Configure-quickBook-Widget * {
           max-width: 100vw !important;
@@ -77,28 +75,30 @@ const LocationAbujaPage = () => {
           }
         }
       `;
-      
-      widgetRef.current.innerHTML = '';
       document.head.appendChild(style);
-      widgetRef.current.appendChild(widgetDiv);
-      
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      script.id = 'propInfo';
-      script.onload = () => console.log('Abuja widget script loaded');
-      script.onerror = () => console.error('Failed to load Abuja widget script');
-      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
-      document.body.appendChild(script);
+
+      // Insert widget HTML directly
+      widgetRef.current.innerHTML = `
+        <div id="quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=" class="Configure-quickBook-Widget"></div>
+        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=" id="propInfo"></script>
+      `;
+
+      // Execute the script manually
+      const scripts = widgetRef.current.getElementsByTagName('script');
+      for (let script of scripts) {
+        const newScript = document.createElement('script');
+        newScript.src = script.src;
+        newScript.id = script.id;
+        newScript.async = true;
+        document.body.appendChild(newScript);
+      }
       
       return () => {
-        if (widgetRef.current) {
-          widgetRef.current.innerHTML = '';
-        }
+        const existingStyle = document.getElementById('quickbook-widget-styles-abuja');
+        if (existingStyle) existingStyle.remove();
+        
         const existingScript = document.getElementById('propInfo');
-        if (existingScript) {
-          existingScript.remove();
-        }
+        if (existingScript) existingScript.remove();
       };
     }
   }, []);
