@@ -40,8 +40,6 @@ const LocationIbadanPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Ibadan widget useEffect running');
-    
     // Add styles to head
     const style = document.createElement('style');
     style.id = 'quickbook-widget-styles-ibadan';
@@ -77,37 +75,38 @@ const LocationIbadanPage = () => {
       }
     `;
     document.head.appendChild(style);
-    console.log('Ibadan styles added');
 
-    // Wait for ref to be available
+    // Optimized widget initialization with retry limit
+    let retryCount = 0;
+    const maxRetries = 50;
+    
     const initWidget = () => {
       if (!widgetRef.current) {
-        console.log('Ibadan widgetRef not ready, retrying...');
-        setTimeout(initWidget, 100);
+        retryCount++;
+        if (retryCount < maxRetries) {
+          setTimeout(initWidget, 200);
+        }
         return;
       }
 
-      console.log('Ibadan widgetRef exists, creating widget');
       const widgetDiv = document.createElement('div');
       widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
       widgetDiv.className = 'Configure-quickBook-Widget';
       widgetRef.current.appendChild(widgetDiv);
-      console.log('Ibadan widget div created with id:', widgetDiv.id);
 
-      // Create and append script
       const script = document.createElement('script');
       script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
       script.id = 'propInfo-ibadan';
       script.async = true;
-      script.onload = () => console.log('Ibadan script loaded successfully');
-      script.onerror = (e) => console.error('Ibadan script failed to load:', e);
+      script.defer = true;
       document.body.appendChild(script);
-      console.log('Ibadan script added to body');
     };
 
-    initWidget();
+    // Delay initial widget load to improve perceived performance
+    const timer = setTimeout(initWidget, 100);
     
     return () => {
+      clearTimeout(timer);
       const existingStyle = document.getElementById('quickbook-widget-styles-ibadan');
       if (existingStyle) existingStyle.remove();
       
@@ -218,6 +217,7 @@ const LocationIbadanPage = () => {
                       <img 
                         src={legacyData.image} 
                         alt={legacyData.imageCaption || "Hotel image"}
+                        loading="lazy"
                         className="w-full h-96 object-cover"
                       />
                       {legacyData.imageCaption && (
@@ -246,6 +246,7 @@ const LocationIbadanPage = () => {
                     <img 
                       src={item.image} 
                       alt={item.alt || item.title || "Gallery image"}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform hover:scale-105"
                     />
                   </div>
@@ -283,6 +284,7 @@ const LocationIbadanPage = () => {
                             <img 
                               src={room.image} 
                               alt={room.name}
+                              loading="lazy"
                               className="w-full h-full object-cover transition-transform hover:scale-105"
                             />
                           </div>
