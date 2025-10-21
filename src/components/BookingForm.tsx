@@ -1,18 +1,19 @@
-import { useState, useEffect, useRef } from "react";
-import { Calendar, MapPin, Users, CalendarDays, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { Calendar, MapPin, Users, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
+
 interface BookingFormProps {
   className?: string;
   variant?: "default" | "hero";
   preselectedLocation?: string;
   showLocationSelector?: boolean;
 }
+
 const BookingForm = ({
   className = "",
   variant = "default",
@@ -23,71 +24,7 @@ const BookingForm = ({
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState("1");
   const [location, setLocation] = useState(preselectedLocation);
-  const widgetRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-  
-  useEffect(() => {
-    if (variant === "hero" && widgetRef.current) {
-      // Create the widget div
-      const widgetDiv = document.createElement('div');
-      widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
-      widgetDiv.className = 'Configure-quickBook-Widget';
-      
-      // Create the script element
-      const script = document.createElement('script');
-      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
-      script.id = 'propInfo';
-      script.async = true;
-      
-      // Add custom styles to keep date pickers within viewport
-      const style = document.createElement('style');
-      style.innerHTML = `
-        /* Ensure date picker dropdowns stay within viewport */
-        .Configure-quickBook-Widget * {
-          max-width: 100vw !important;
-        }
-        
-        .Configure-quickBook-Widget [class*="calendar"],
-        .Configure-quickBook-Widget [class*="date-picker"],
-        .Configure-quickBook-Widget [class*="dropdown"],
-        .Configure-quickBook-Widget [class*="popup"],
-        .Configure-quickBook-Widget [class*="popover"] {
-          position: fixed !important;
-          max-width: calc(100vw - 2rem) !important;
-          max-height: calc(100vh - 2rem) !important;
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          z-index: 9999 !important;
-          overflow: auto !important;
-        }
-        
-        @media (min-width: 768px) {
-          .Configure-quickBook-Widget [class*="calendar"],
-          .Configure-quickBook-Widget [class*="date-picker"],
-          .Configure-quickBook-Widget [class*="dropdown"],
-          .Configure-quickBook-Widget [class*="popup"],
-          .Configure-quickBook-Widget [class*="popover"] {
-            position: absolute !important;
-            left: auto !important;
-            transform: none !important;
-          }
-        }
-      `;
-      
-      // Clear existing content and append new elements
-      widgetRef.current.innerHTML = '';
-      widgetRef.current.appendChild(style);
-      widgetRef.current.appendChild(widgetDiv);
-      widgetRef.current.appendChild(script);
-      
-      // Cleanup function
-      return () => {
-        if (widgetRef.current) {
-          widgetRef.current.innerHTML = '';
-        }
-      };
-    }
-  }, [variant]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,16 +43,7 @@ const BookingForm = ({
   };
   const cardClass = variant === "hero" ? "bg-background/95 backdrop-blur-sm shadow-luxury" : "card-luxury";
 
-  // Horizontal layout for homepage with Quickbook widget
-  if (variant === "hero") {
-    return <Card className={`${cardClass} ${className} w-full mx-auto`}>
-        <CardContent className="p-4">
-          <div ref={widgetRef} className="min-h-[200px]"></div>
-        </CardContent>
-      </Card>;
-  }
-
-  // Vertical compact layout for location pages (no location selector)
+  // Compact layout for booking form
   return <Card className={`${cardClass} ${className}`}>
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-heading text-center">Book Your Stay</CardTitle>
