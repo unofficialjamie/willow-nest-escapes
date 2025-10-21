@@ -80,7 +80,7 @@ const LocationOgbomoshoPage = () => {
       // Insert widget HTML directly
       widgetRef.current.innerHTML = `
         <div id="quickbook-widget-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=" class="Configure-quickBook-Widget"></div>
-        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=" id="propInfo"></script>
+        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=" id="propInfo-ogbomosho"></script>
       `;
 
       // Execute the script manually
@@ -97,7 +97,7 @@ const LocationOgbomoshoPage = () => {
         const existingStyle = document.getElementById('quickbook-widget-styles-ogb');
         if (existingStyle) existingStyle.remove();
         
-        const existingScript = document.getElementById('propInfo');
+        const existingScript = document.getElementById('propInfo-ogbomosho');
         if (existingScript) existingScript.remove();
       };
     }

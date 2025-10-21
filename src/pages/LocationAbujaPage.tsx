@@ -80,7 +80,7 @@ const LocationAbujaPage = () => {
       // Insert widget HTML directly
       widgetRef.current.innerHTML = `
         <div id="quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=" class="Configure-quickBook-Widget"></div>
-        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=" id="propInfo"></script>
+        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=" id="propInfo-abuja"></script>
       `;
 
       // Execute the script manually
@@ -97,7 +97,7 @@ const LocationAbujaPage = () => {
         const existingStyle = document.getElementById('quickbook-widget-styles-abuja');
         if (existingStyle) existingStyle.remove();
         
-        const existingScript = document.getElementById('propInfo');
+        const existingScript = document.getElementById('propInfo-abuja');
         if (existingScript) existingScript.remove();
       };
     }

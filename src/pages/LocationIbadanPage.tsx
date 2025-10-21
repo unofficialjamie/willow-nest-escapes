@@ -80,7 +80,7 @@ const LocationIbadanPage = () => {
       // Insert widget HTML directly
       widgetRef.current.innerHTML = `
         <div id="quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=" class="Configure-quickBook-Widget"></div>
-        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=" id="propInfo"></script>
+        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=" id="propInfo-ibadan"></script>
       `;
 
       // Execute the script manually
@@ -97,7 +97,7 @@ const LocationIbadanPage = () => {
         const existingStyle = document.getElementById('quickbook-widget-styles-ibadan');
         if (existingStyle) existingStyle.remove();
         
-        const existingScript = document.getElementById('propInfo');
+        const existingScript = document.getElementById('propInfo-ibadan');
         if (existingScript) existingScript.remove();
       };
     }
