@@ -73,8 +73,64 @@ const BookingForm = ({
   // Horizontal layout for homepage with Quickbook widget
   if (variant === "hero") {
     return <Card className={`${cardClass} ${className} w-full mx-auto`}>
-        <CardContent className="p-4">
-          <div ref={widgetRef} className="min-h-[200px]"></div>
+        <CardContent className="p-6">
+          <div ref={widgetRef} className="quickbook-widget-wrapper min-h-[200px]"></div>
+          <style>{`
+            .quickbook-widget-wrapper {
+              font-family: var(--font-heading) !important;
+            }
+            
+            .quickbook-widget-wrapper * {
+              border-radius: 8px !important;
+            }
+            
+            .quickbook-widget-wrapper input,
+            .quickbook-widget-wrapper select,
+            .quickbook-widget-wrapper button {
+              padding: 12px 16px !important;
+              font-size: 14px !important;
+              border: 1px solid hsl(var(--border)) !important;
+              transition: all 0.3s ease !important;
+            }
+            
+            .quickbook-widget-wrapper input:focus,
+            .quickbook-widget-wrapper select:focus {
+              outline: none !important;
+              border-color: hsl(var(--primary)) !important;
+              box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1) !important;
+            }
+            
+            .quickbook-widget-wrapper button {
+              background: hsl(var(--primary)) !important;
+              color: hsl(var(--primary-foreground)) !important;
+              font-weight: 600 !important;
+              border: none !important;
+              cursor: pointer !important;
+              text-transform: uppercase !important;
+              letter-spacing: 0.5px !important;
+            }
+            
+            .quickbook-widget-wrapper button:hover {
+              background: hsl(var(--primary) / 0.9) !important;
+              transform: translateY(-1px) !important;
+              box-shadow: 0 4px 12px hsl(var(--primary) / 0.3) !important;
+            }
+            
+            .quickbook-widget-wrapper label {
+              font-weight: 500 !important;
+              color: hsl(var(--muted-foreground)) !important;
+              margin-bottom: 8px !important;
+              display: block !important;
+              font-size: 13px !important;
+              text-transform: uppercase !important;
+              letter-spacing: 0.5px !important;
+            }
+            
+            .Configure-quickBook-Widget {
+              background: transparent !important;
+              padding: 0 !important;
+            }
+          `}</style>
         </CardContent>
       </Card>;
   }
