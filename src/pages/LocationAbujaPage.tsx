@@ -269,7 +269,12 @@ const LocationAbujaPage = () => {
                                 <p className="text-xs line-clamp-2">{room.description}</p>
                               )}
                             </div>
-                            <Button variant="outline" className="w-full">
+                            <Button 
+                              variant="outline" 
+                              className="w-full"
+                              onClick={() => room.button_link && window.open(room.button_link, '_blank')}
+                              disabled={!room.button_link}
+                            >
                               {room.button_link ? 'View Details' : 'View Room'}
                             </Button>
                           </div>
