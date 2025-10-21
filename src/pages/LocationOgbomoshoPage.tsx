@@ -45,11 +45,6 @@ const LocationOgbomoshoPage = () => {
       widgetDiv.id = 'quickbook-widget-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
       widgetDiv.className = 'Configure-quickBook-Widget';
       
-      const script = document.createElement('script');
-      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
-      script.id = 'propInfo';
-      script.async = true;
-      
       const style = document.createElement('style');
       style.innerHTML = `
         .Configure-quickBook-Widget * {
@@ -84,13 +79,25 @@ const LocationOgbomoshoPage = () => {
       `;
       
       widgetRef.current.innerHTML = '';
-      widgetRef.current.appendChild(style);
+      document.head.appendChild(style);
       widgetRef.current.appendChild(widgetDiv);
-      widgetRef.current.appendChild(script);
+      
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.id = 'propInfo';
+      script.onload = () => console.log('Ogbomosho widget script loaded');
+      script.onerror = () => console.error('Failed to load Ogbomosho widget script');
+      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
+      document.body.appendChild(script);
       
       return () => {
         if (widgetRef.current) {
           widgetRef.current.innerHTML = '';
+        }
+        const existingScript = document.getElementById('propInfo');
+        if (existingScript) {
+          existingScript.remove();
         }
       };
     }

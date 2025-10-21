@@ -45,11 +45,6 @@ const LocationIbadanPage = () => {
       widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
       widgetDiv.className = 'Configure-quickBook-Widget';
       
-      const script = document.createElement('script');
-      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
-      script.id = 'propInfo';
-      script.async = true;
-      
       const style = document.createElement('style');
       style.innerHTML = `
         .Configure-quickBook-Widget * {
@@ -84,13 +79,25 @@ const LocationIbadanPage = () => {
       `;
       
       widgetRef.current.innerHTML = '';
-      widgetRef.current.appendChild(style);
+      document.head.appendChild(style);
       widgetRef.current.appendChild(widgetDiv);
-      widgetRef.current.appendChild(script);
+      
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.id = 'propInfo';
+      script.onload = () => console.log('Ibadan widget script loaded');
+      script.onerror = () => console.error('Failed to load Ibadan widget script');
+      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
+      document.body.appendChild(script);
       
       return () => {
         if (widgetRef.current) {
           widgetRef.current.innerHTML = '';
+        }
+        const existingScript = document.getElementById('propInfo');
+        if (existingScript) {
+          existingScript.remove();
         }
       };
     }

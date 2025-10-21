@@ -95,11 +95,6 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        
-        {/* Booking Form Overlay */}
-        <div className="absolute -bottom-12 md:-bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-7xl px-4">
-          <BookingForm variant="hero" showLocationSelector={true} />
-        </div>
       </section>
 
       {/* Quick Highlights */}
