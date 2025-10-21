@@ -40,67 +40,64 @@ const LocationIbadanPage = () => {
   }, []);
 
   useEffect(() => {
-    if (widgetRef.current) {
-      // Add styles to head
-      const style = document.createElement('style');
-      style.id = 'quickbook-widget-styles-ibadan';
-      style.innerHTML = `
-        .Configure-quickBook-Widget * {
-          max-width: 100vw !important;
-        }
-        
+    // Add styles to head
+    const style = document.createElement('style');
+    style.id = 'quickbook-widget-styles-ibadan';
+    style.innerHTML = `
+      .Configure-quickBook-Widget * {
+        max-width: 100vw !important;
+      }
+      
+      .Configure-quickBook-Widget [class*="calendar"],
+      .Configure-quickBook-Widget [class*="date-picker"],
+      .Configure-quickBook-Widget [class*="dropdown"],
+      .Configure-quickBook-Widget [class*="popup"],
+      .Configure-quickBook-Widget [class*="popover"] {
+        position: fixed !important;
+        max-width: calc(100vw - 2rem) !important;
+        max-height: calc(100vh - 2rem) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 9999 !important;
+        overflow: auto !important;
+      }
+      
+      @media (min-width: 768px) {
         .Configure-quickBook-Widget [class*="calendar"],
         .Configure-quickBook-Widget [class*="date-picker"],
         .Configure-quickBook-Widget [class*="dropdown"],
         .Configure-quickBook-Widget [class*="popup"],
         .Configure-quickBook-Widget [class*="popover"] {
-          position: fixed !important;
-          max-width: calc(100vw - 2rem) !important;
-          max-height: calc(100vh - 2rem) !important;
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          z-index: 9999 !important;
-          overflow: auto !important;
+          position: absolute !important;
+          left: auto !important;
+          transform: none !important;
         }
-        
-        @media (min-width: 768px) {
-          .Configure-quickBook-Widget [class*="calendar"],
-          .Configure-quickBook-Widget [class*="date-picker"],
-          .Configure-quickBook-Widget [class*="dropdown"],
-          .Configure-quickBook-Widget [class*="popup"],
-          .Configure-quickBook-Widget [class*="popover"] {
-            position: absolute !important;
-            left: auto !important;
-            transform: none !important;
-          }
-        }
-      `;
-      document.head.appendChild(style);
-
-      // Insert widget HTML directly
-      widgetRef.current.innerHTML = `
-        <div id="quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=" class="Configure-quickBook-Widget"></div>
-        <script src="https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=" id="propInfo-ibadan"></script>
-      `;
-
-      // Execute the script manually
-      const scripts = widgetRef.current.getElementsByTagName('script');
-      for (let script of scripts) {
-        const newScript = document.createElement('script');
-        newScript.src = script.src;
-        newScript.id = script.id;
-        newScript.async = true;
-        document.body.appendChild(newScript);
       }
-      
-      return () => {
-        const existingStyle = document.getElementById('quickbook-widget-styles-ibadan');
-        if (existingStyle) existingStyle.remove();
-        
-        const existingScript = document.getElementById('propInfo-ibadan');
-        if (existingScript) existingScript.remove();
-      };
+    `;
+    document.head.appendChild(style);
+
+    // Create widget div
+    if (widgetRef.current) {
+      const widgetDiv = document.createElement('div');
+      widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
+      widgetDiv.className = 'Configure-quickBook-Widget';
+      widgetRef.current.appendChild(widgetDiv);
+
+      // Create and append script
+      const script = document.createElement('script');
+      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
+      script.id = 'propInfo-ibadan';
+      script.async = true;
+      document.body.appendChild(script);
     }
+    
+    return () => {
+      const existingStyle = document.getElementById('quickbook-widget-styles-ibadan');
+      if (existingStyle) existingStyle.remove();
+      
+      const existingScript = document.getElementById('propInfo-ibadan');
+      if (existingScript) existingScript.remove();
+    };
   }, []);
 
   const fetchRooms = async () => {
