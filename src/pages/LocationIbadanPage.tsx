@@ -79,8 +79,14 @@ const LocationIbadanPage = () => {
     document.head.appendChild(style);
     console.log('Ibadan styles added');
 
-    // Create widget div
-    if (widgetRef.current) {
+    // Wait for ref to be available
+    const initWidget = () => {
+      if (!widgetRef.current) {
+        console.log('Ibadan widgetRef not ready, retrying...');
+        setTimeout(initWidget, 100);
+        return;
+      }
+
       console.log('Ibadan widgetRef exists, creating widget');
       const widgetDiv = document.createElement('div');
       widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
@@ -97,9 +103,9 @@ const LocationIbadanPage = () => {
       script.onerror = (e) => console.error('Ibadan script failed to load:', e);
       document.body.appendChild(script);
       console.log('Ibadan script added to body');
-    } else {
-      console.error('Ibadan widgetRef is null!');
-    }
+    };
+
+    initWidget();
     
     return () => {
       const existingStyle = document.getElementById('quickbook-widget-styles-ibadan');

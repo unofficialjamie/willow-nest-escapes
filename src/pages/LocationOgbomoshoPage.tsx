@@ -40,6 +40,8 @@ const LocationOgbomoshoPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log('Ogbomosho widget useEffect running');
+    
     // Add styles to head
     const style = document.createElement('style');
     style.id = 'quickbook-widget-styles-ogb';
@@ -75,21 +77,35 @@ const LocationOgbomoshoPage = () => {
       }
     `;
     document.head.appendChild(style);
+    console.log('Ogbomosho styles added');
 
-    // Create widget div
-    if (widgetRef.current) {
+    // Wait for ref to be available
+    const initWidget = () => {
+      if (!widgetRef.current) {
+        console.log('Ogbomosho widgetRef not ready, retrying...');
+        setTimeout(initWidget, 100);
+        return;
+      }
+
+      console.log('Ogbomosho widgetRef exists, creating widget');
       const widgetDiv = document.createElement('div');
       widgetDiv.id = 'quickbook-widget-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=-801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
       widgetDiv.className = 'Configure-quickBook-Widget';
       widgetRef.current.appendChild(widgetDiv);
+      console.log('Ogbomosho widget div created with id:', widgetDiv.id);
 
       // Create and append script
       const script = document.createElement('script');
       script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=&scriptId=801NRszVnTA2JIJYhCjy30pBMiTGWm2s1em8wfQUkmcETYxNDA=';
       script.id = 'propInfo-ogbomosho';
       script.async = true;
+      script.onload = () => console.log('Ogbomosho script loaded successfully');
+      script.onerror = (e) => console.error('Ogbomosho script failed to load:', e);
       document.body.appendChild(script);
-    }
+      console.log('Ogbomosho script added to body');
+    };
+
+    initWidget();
     
     return () => {
       const existingStyle = document.getElementById('quickbook-widget-styles-ogb');

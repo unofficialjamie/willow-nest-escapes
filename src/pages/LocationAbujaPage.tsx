@@ -79,8 +79,14 @@ const LocationAbujaPage = () => {
     document.head.appendChild(style);
     console.log('Abuja styles added');
 
-    // Create widget div
-    if (widgetRef.current) {
+    // Wait for ref to be available
+    const initWidget = () => {
+      if (!widgetRef.current) {
+        console.log('Abuja widgetRef not ready, retrying...');
+        setTimeout(initWidget, 100);
+        return;
+      }
+
       console.log('Abuja widgetRef exists, creating widget');
       const widgetDiv = document.createElement('div');
       widgetDiv.id = 'quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
@@ -97,9 +103,9 @@ const LocationAbujaPage = () => {
       script.onerror = (e) => console.error('Abuja script failed to load:', e);
       document.body.appendChild(script);
       console.log('Abuja script added to body');
-    } else {
-      console.error('Abuja widgetRef is null!');
-    }
+    };
+
+    initWidget();
     
     return () => {
       const existingStyle = document.getElementById('quickbook-widget-styles-abuja');
