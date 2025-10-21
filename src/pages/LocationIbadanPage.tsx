@@ -40,6 +40,8 @@ const LocationIbadanPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log('Ibadan widget useEffect running');
+    
     // Add styles to head
     const style = document.createElement('style');
     style.id = 'quickbook-widget-styles-ibadan';
@@ -75,20 +77,28 @@ const LocationIbadanPage = () => {
       }
     `;
     document.head.appendChild(style);
+    console.log('Ibadan styles added');
 
     // Create widget div
     if (widgetRef.current) {
+      console.log('Ibadan widgetRef exists, creating widget');
       const widgetDiv = document.createElement('div');
       widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
       widgetDiv.className = 'Configure-quickBook-Widget';
       widgetRef.current.appendChild(widgetDiv);
+      console.log('Ibadan widget div created with id:', widgetDiv.id);
 
       // Create and append script
       const script = document.createElement('script');
       script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
       script.id = 'propInfo-ibadan';
       script.async = true;
+      script.onload = () => console.log('Ibadan script loaded successfully');
+      script.onerror = (e) => console.error('Ibadan script failed to load:', e);
       document.body.appendChild(script);
+      console.log('Ibadan script added to body');
+    } else {
+      console.error('Ibadan widgetRef is null!');
     }
     
     return () => {

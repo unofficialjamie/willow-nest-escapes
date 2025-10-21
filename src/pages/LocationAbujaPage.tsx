@@ -40,6 +40,8 @@ const LocationAbujaPage = () => {
   }, []);
 
   useEffect(() => {
+    console.log('Abuja widget useEffect running');
+    
     // Add styles to head
     const style = document.createElement('style');
     style.id = 'quickbook-widget-styles-abuja';
@@ -75,20 +77,28 @@ const LocationAbujaPage = () => {
       }
     `;
     document.head.appendChild(style);
+    console.log('Abuja styles added');
 
     // Create widget div
     if (widgetRef.current) {
+      console.log('Abuja widgetRef exists, creating widget');
       const widgetDiv = document.createElement('div');
       widgetDiv.id = 'quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
       widgetDiv.className = 'Configure-quickBook-Widget';
       widgetRef.current.appendChild(widgetDiv);
+      console.log('Abuja widget div created with id:', widgetDiv.id);
 
       // Create and append script
       const script = document.createElement('script');
       script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
       script.id = 'propInfo-abuja';
       script.async = true;
+      script.onload = () => console.log('Abuja script loaded successfully');
+      script.onerror = (e) => console.error('Abuja script failed to load:', e);
       document.body.appendChild(script);
+      console.log('Abuja script added to body');
+    } else {
+      console.error('Abuja widgetRef is null!');
     }
     
     return () => {
