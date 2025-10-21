@@ -161,17 +161,19 @@ const LocationIbadanPage = () => {
             backgroundPosition: 'center'
           }}
         >
-          <div className="container mx-auto px-4 flex-1 flex items-center">
-            <div className="max-w-2xl space-y-6">
+          <div className="container mx-auto px-4 flex-1 flex items-center justify-center">
+            <div className="max-w-2xl mx-auto text-center space-y-6">
               <h1 className="font-heading text-5xl md:text-6xl font-bold leading-tight">
                 {heroData.title}
               </h1>
               <p className="text-xl text-white/90 leading-relaxed">
                 {heroData.description}
               </p>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-md font-semibold">
-                {heroData.ctaText}
-              </Button>
+              <div>
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded-md font-semibold">
+                  {heroData.ctaText}
+                </Button>
+              </div>
             </div>
           </div>
           
