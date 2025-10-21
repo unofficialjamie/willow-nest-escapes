@@ -291,53 +291,54 @@ const AdminRooms = () => {
                       type="file"
                       accept="image/*"
                       disabled={uploadingImage}
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
                         
+                        // Validate file
+                        if (!file.type.startsWith('image/')) {
+                          toast({
+                            title: "Invalid File",
+                            description: "Please upload an image file",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+
+                        if (file.size > 5 * 1024 * 1024) {
+                          toast({
+                            title: "File Too Large",
+                            description: "Please upload an image smaller than 5MB",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+
                         setUploadingImage(true);
                         
-                        try {
-                          const fileExt = file.name.split('.').pop();
-                          const fileName = `${Date.now()}.${fileExt}`;
-                          const filePath = `rooms/${formData.location}/${fileName}`;
-
-                          const { error: uploadError } = await supabase.storage
-                            .from('website-images')
-                            .upload(filePath, file, {
-                              cacheControl: '3600',
-                              upsert: false
-                            });
-
-                          if (uploadError) {
-                            console.error('Upload error:', uploadError);
-                            toast({
-                              title: "Error",
-                              description: uploadError.message || "Failed to upload image",
-                              variant: "destructive",
-                            });
-                            return;
-                          }
-
-                          const { data: { publicUrl } } = supabase.storage
-                            .from('website-images')
-                            .getPublicUrl(filePath);
-
-                          setFormData({ ...formData, image_url: publicUrl });
+                        // Convert image to base64
+                        const reader = new FileReader();
+                        
+                        reader.onloadend = () => {
+                          const base64String = reader.result as string;
+                          setFormData({ ...formData, image_url: base64String });
+                          setUploadingImage(false);
                           toast({
                             title: "Success",
                             description: "Image uploaded successfully",
                           });
-                        } catch (error: any) {
-                          console.error('Upload error:', error);
+                        };
+                        
+                        reader.onerror = () => {
+                          setUploadingImage(false);
                           toast({
                             title: "Error",
-                            description: error.message || "Failed to upload image",
+                            description: "Failed to read image file",
                             variant: "destructive",
                           });
-                        } finally {
-                          setUploadingImage(false);
-                        }
+                        };
+                        
+                        reader.readAsDataURL(file);
                       }}
                     />
                     {uploadingImage && (
