@@ -14,24 +14,25 @@ export interface PageSection {
 
 export const usePageSections = (pageName: string) => {
   // Load from localStorage immediately to prevent slow loading
-  const getCachedSections = (): PageSection[] => {
+  const getCachedSections = (): { sections: PageSection[], hasCache: boolean } => {
     try {
       const cached = localStorage.getItem(`page_sections_${pageName}`);
       if (cached) {
         const parsed = JSON.parse(cached);
         // Check if cache is less than 5 minutes old
         if (parsed.timestamp && Date.now() - parsed.timestamp < 5 * 60 * 1000) {
-          return parsed.data;
+          return { sections: parsed.data, hasCache: true };
         }
       }
     } catch (err) {
       console.error("Error loading cached page sections:", err);
     }
-    return [];
+    return { sections: [], hasCache: false };
   };
 
-  const [sections, setSections] = useState<PageSection[]>(getCachedSections());
-  const [loading, setLoading] = useState(true);
+  const cachedData = getCachedSections();
+  const [sections, setSections] = useState<PageSection[]>(cachedData.sections);
+  const [loading, setLoading] = useState(!cachedData.hasCache);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
