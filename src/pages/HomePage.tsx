@@ -139,13 +139,7 @@ const HomePage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {facilitiesData.items?.map((facility: any, index: number) => <Card key={index} className="card-luxury hover-lift overflow-hidden">
                   <div className="relative h-80">
-                    <img 
-                      src={facility.image} 
-                      alt={facility.title} 
-                      className="w-full h-full object-cover" 
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <img src={facility.image} alt={facility.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     <div className="absolute bottom-6 left-6 right-6 text-white">
                       <h3 className="font-heading text-2xl font-bold mb-2">{facility.title}</h3>
@@ -184,13 +178,7 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {locationsData.items?.map((location: any, index: number) => <Card key={index} className="card-luxury hover-lift overflow-hidden">
                 <div className="relative h-64">
-                  <img 
-                    src={location.image} 
-                    alt={location.name} 
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <img src={location.image} alt={location.name} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-4 left-4 text-white">
                     <h3 className="font-heading text-2xl font-bold">{location.name}</h3>

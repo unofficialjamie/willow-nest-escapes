@@ -74,49 +74,39 @@ const LocationAbujaPage = () => {
         }
       }
     `;
+    document.head.appendChild(style);
+
+    // Optimized widget initialization with retry limit
+    let retryCount = 0;
+    const maxRetries = 50;
     
-    // Defer widget loading until page is fully loaded
-    const loadWidget = () => {
-      document.head.appendChild(style);
-
-      // Optimized widget initialization with retry limit
-      let retryCount = 0;
-      const maxRetries = 50;
-      
-      const initWidget = () => {
-        if (!widgetRef.current) {
-          retryCount++;
-          if (retryCount < maxRetries) {
-            setTimeout(initWidget, 200);
-          }
-          return;
+    const initWidget = () => {
+      if (!widgetRef.current) {
+        retryCount++;
+        if (retryCount < maxRetries) {
+          setTimeout(initWidget, 200);
         }
+        return;
+      }
 
-        const widgetDiv = document.createElement('div');
-        widgetDiv.id = 'quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
-        widgetDiv.className = 'Configure-quickBook-Widget';
-        widgetRef.current.appendChild(widgetDiv);
+      const widgetDiv = document.createElement('div');
+      widgetDiv.id = 'quickbook-widget-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=-681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
+      widgetDiv.className = 'Configure-quickBook-Widget';
+      widgetRef.current.appendChild(widgetDiv);
 
-        const script = document.createElement('script');
-        script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
-        script.id = 'propInfo-abuja';
-        script.async = true;
-        script.defer = true;
-        document.body.appendChild(script);
-      };
-
-      // Delay initial widget load to improve perceived performance
-      setTimeout(initWidget, 100);
+      const script = document.createElement('script');
+      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=&scriptId=681NQfefbo9NUnqk75mBqfu75zYCzgvYvqeExVTYxMzg=';
+      script.id = 'propInfo-abuja';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
     };
 
-    // Wait for page to fully load before initializing widget
-    if (document.readyState === 'complete') {
-      setTimeout(loadWidget, 1500);
-    } else {
-      window.addEventListener('load', () => setTimeout(loadWidget, 1500));
-    }
+    // Delay initial widget load to improve perceived performance
+    const timer = setTimeout(initWidget, 100);
     
     return () => {
+      clearTimeout(timer);
       const existingStyle = document.getElementById('quickbook-widget-styles-abuja');
       if (existingStyle) existingStyle.remove();
       
