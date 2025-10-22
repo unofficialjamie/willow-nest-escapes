@@ -74,39 +74,49 @@ const LocationIbadanPage = () => {
         }
       }
     `;
-    document.head.appendChild(style);
-
-    // Optimized widget initialization with retry limit
-    let retryCount = 0;
-    const maxRetries = 50;
     
-    const initWidget = () => {
-      if (!widgetRef.current) {
-        retryCount++;
-        if (retryCount < maxRetries) {
-          setTimeout(initWidget, 200);
+    // Defer widget loading until page is fully loaded
+    const loadWidget = () => {
+      document.head.appendChild(style);
+
+      // Optimized widget initialization with retry limit
+      let retryCount = 0;
+      const maxRetries = 50;
+      
+      const initWidget = () => {
+        if (!widgetRef.current) {
+          retryCount++;
+          if (retryCount < maxRetries) {
+            setTimeout(initWidget, 200);
+          }
+          return;
         }
-        return;
-      }
 
-      const widgetDiv = document.createElement('div');
-      widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
-      widgetDiv.className = 'Configure-quickBook-Widget';
-      widgetRef.current.appendChild(widgetDiv);
+        const widgetDiv = document.createElement('div');
+        widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
+        widgetDiv.className = 'Configure-quickBook-Widget';
+        widgetRef.current.appendChild(widgetDiv);
 
-      const script = document.createElement('script');
-      script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
-      script.id = 'propInfo-ibadan';
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
+        const script = document.createElement('script');
+        script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
+        script.id = 'propInfo-ibadan';
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+      };
+
+      // Delay initial widget load to improve perceived performance
+      setTimeout(initWidget, 100);
     };
 
-    // Delay initial widget load to improve perceived performance
-    const timer = setTimeout(initWidget, 100);
+    // Wait for page to fully load before initializing widget
+    if (document.readyState === 'complete') {
+      setTimeout(loadWidget, 1500);
+    } else {
+      window.addEventListener('load', () => setTimeout(loadWidget, 1500));
+    }
     
     return () => {
-      clearTimeout(timer);
       const existingStyle = document.getElementById('quickbook-widget-styles-ibadan');
       if (existingStyle) existingStyle.remove();
       
