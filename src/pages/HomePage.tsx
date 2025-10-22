@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,57 +28,27 @@ const HomePage = () => {
     loading,
     getSectionData
   } = usePageSections('home');
-  const widgetRefDesktop = useRef<HTMLDivElement>(null);
-  const widgetRefMobile = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    // Add widget initialization
-    let retryCount = 0;
-    const maxRetries = 50;
-    
-    const initWidget = () => {
-      if (!widgetRefDesktop.current && !widgetRefMobile.current) {
-        retryCount++;
-        if (retryCount < maxRetries) {
-          setTimeout(initWidget, 200);
-        }
-        return;
-      }
-
-      // Create widget for desktop (inside hero)
-      if (widgetRefDesktop.current) {
-        const widgetDivDesktop = document.createElement('div');
-        widgetDivDesktop.id = 'quickbook-widget';
-        widgetDivDesktop.className = 'Configure-quickBook-Widget';
-        widgetRefDesktop.current.appendChild(widgetDivDesktop);
-      }
-
-      // Create widget for mobile (after hero)
-      if (widgetRefMobile.current) {
-        const widgetDivMobile = document.createElement('div');
-        widgetDivMobile.id = 'quickbook-widget-mobile';
-        widgetDivMobile.className = 'Configure-quickBook-Widget';
-        widgetRefMobile.current.appendChild(widgetDivMobile);
-      }
-
-      const script = document.createElement('script');
-      script.src = 'https://www.swiftbook.io/plugin/js/booking-service.min.js';
-      script.id = 'propInfo-home';
-      script.setAttribute('groupid', '761NKehQgZ7WF8NcAIfUSkt9DHNmuM762QuHoL2EDmTYxMzc=');
-      script.setAttribute('cal-rendererid', 'quickbook-widget');
-      script.setAttribute('jdrn', 'Y');
-      script.setAttribute('location', 'off');
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-    };
-
-    const timer = setTimeout(initWidget, 100);
+    // Load widget script
+    const script = document.createElement('script');
+    script.src = 'https://www.swiftbook.io/plugin/js/booking-service.min.js';
+    script.id = 'propInfo';
+    script.setAttribute('groupid', '761NKehQgZ7WF8NcAIfUSkt9DHNmuM762QuHoL2EDmTYxMzc=');
+    script.setAttribute('cal-rendererid', 'quickbook-widget');
+    script.setAttribute('jdrn', 'Y');
+    script.setAttribute('location', 'off');
+    script.async = true;
+    document.body.appendChild(script);
     
     return () => {
-      clearTimeout(timer);
-      const existingScript = document.getElementById('propInfo-home');
+      const existingScript = document.getElementById('propInfo');
       if (existingScript) existingScript.remove();
+      
+      // Clean up widget divs
+      const widgetDiv = document.getElementById('quickbook-widget');
+      if (widgetDiv) widgetDiv.innerHTML = '';
+      const widgetDivMobile = document.getElementById('quickbook-widget-mobile');
+      if (widgetDivMobile) widgetDivMobile.innerHTML = '';
     };
   }, []);
 
@@ -152,14 +122,14 @@ const HomePage = () => {
         </div>
         
         <div className="container mx-auto px-4 pb-8">
-          <div ref={widgetRefDesktop} className="min-h-[100px] max-w-[1000px] mx-auto hidden md:block"></div>
+          <div id="quickbook-widget" className="min-h-[100px] max-w-[1000px] mx-auto hidden md:block"></div>
         </div>
       </section>
 
       {/* Mobile Widget - After Hero */}
       <div className="block md:hidden bg-background py-6">
         <div className="container mx-auto px-4">
-          <div ref={widgetRefMobile} className="min-h-[100px] max-w-[1000px] mx-auto"></div>
+          <div id="quickbook-widget-mobile" className="min-h-[100px] max-w-[1000px] mx-auto"></div>
         </div>
       </div>
 
