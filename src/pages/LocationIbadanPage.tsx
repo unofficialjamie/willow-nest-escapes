@@ -33,7 +33,8 @@ const LocationIbadanPage = () => {
   const { sections, loading, getSectionData } = usePageSections("location-ibadan");
   const [rooms, setRooms] = useState<any[]>([]);
   const [roomsLoading, setRoomsLoading] = useState(true);
-  const widgetRef = useRef<HTMLDivElement>(null);
+  const widgetRefDesktop = useRef<HTMLDivElement>(null);
+  const widgetRefMobile = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchRooms();
@@ -81,7 +82,7 @@ const LocationIbadanPage = () => {
     const maxRetries = 50;
     
     const initWidget = () => {
-      if (!widgetRef.current) {
+      if (!widgetRefDesktop.current && !widgetRefMobile.current) {
         retryCount++;
         if (retryCount < maxRetries) {
           setTimeout(initWidget, 200);
@@ -89,10 +90,21 @@ const LocationIbadanPage = () => {
         return;
       }
 
-      const widgetDiv = document.createElement('div');
-      widgetDiv.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
-      widgetDiv.className = 'Configure-quickBook-Widget';
-      widgetRef.current.appendChild(widgetDiv);
+      // Create widget for desktop (inside hero)
+      if (widgetRefDesktop.current) {
+        const widgetDivDesktop = document.createElement('div');
+        widgetDivDesktop.id = 'quickbook-widget-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
+        widgetDivDesktop.className = 'Configure-quickBook-Widget';
+        widgetRefDesktop.current.appendChild(widgetDivDesktop);
+      }
+
+      // Create widget for mobile (after hero)
+      if (widgetRefMobile.current) {
+        const widgetDivMobile = document.createElement('div');
+        widgetDivMobile.id = 'quickbook-widget-mobile-223NTYKSXwsBVDOuDxMzk=-223NTYKSXwsBVDOuDxMzk=';
+        widgetDivMobile.className = 'Configure-quickBook-Widget';
+        widgetRefMobile.current.appendChild(widgetDivMobile);
+      }
 
       const script = document.createElement('script');
       script.src = 'https://settings.swiftbook.io/displaywidget/preview/booking-service.min.js?propertyId=223NTYKSXwsBVDOuDxMzk=&scriptId=223NTYKSXwsBVDOuDxMzk=';
@@ -178,9 +190,16 @@ const LocationIbadanPage = () => {
           </div>
           
           <div className="container mx-auto px-4 pb-8">
-            <div ref={widgetRef} className="min-h-[100px] max-w-[1000px] mx-auto hidden md:block"></div>
+            <div ref={widgetRefDesktop} className="min-h-[100px] max-w-[1000px] mx-auto hidden md:block"></div>
           </div>
         </section>
+
+        {/* Mobile Widget - After Hero */}
+        <div className="block md:hidden bg-background py-6">
+          <div className="container mx-auto px-4">
+            <div ref={widgetRefMobile} className="min-h-[100px] max-w-[1000px] mx-auto"></div>
+          </div>
+        </div>
 
         {/* Legacy of Excellence Section */}
         {legacyData.title && (
